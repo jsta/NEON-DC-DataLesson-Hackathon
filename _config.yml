@@ -18,16 +18,16 @@ disqus_shortname: neondataskills
 
 # Owner/author information
 owner: 		
-  name: NEON EDUCATION
+  name: NEON / Data Carpentry Hackathon
   avatar: profilePic.png
   bio: "Devoted to open data and open source in science and education."
   email: "lwasser@neoninc.org"
-  twitter: "leahawasser"
+#  twitter: "leahawasser"
   github: "lwasser"
-  youtube: "neonbetaedu"
-# instagram:      "mmistakes"
+#  youtube: " "
+# instagram:      " "
 # For Google Authorship https://plus.google.com/authorship
-# google_plus:    "MichaelRoseDesign"
+# google_plus:    
 
 # Analytics and webmaster tools stuff goes here
 google_analytics:   UA-52746937-1
@@ -35,8 +35,8 @@ google_analytics:   UA-52746937-1
 # https://ssl.bing.com/webmaster/configure/verify/ownership Option 2 content= goes here
 #bing_verify:        D81F4C18A6CB3018F64D7C827D953DFD
 
-category: [using lidar data, working with field data, zcarbon links]
-categories: [using lidar data, working with field data, zcarbon links]
+# category: [using lidar data, working with field data, zcarbon links]
+# categories: [using lidar data, working with field data, zcarbon links]
 # Links to include in top navigation
 # For external links add external: true
 links:  
