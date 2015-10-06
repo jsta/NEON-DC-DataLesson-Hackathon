@@ -9,12 +9,17 @@ image:
 ---
 
 
-##Welcome to the NEON / Data Carpentry Hackathon 
-### October 21-23 2015
+##Welcome to the NEON / Data Carpentry Hackathon ! 
+
+###October 21-23 2015
 
 Will revise this text.
 
-This site contains data lessons, background materials and other resources that support working with large spatio-temporal datasets, like those offered by the <a href="http://www.neoninc.org" target="_blank">NEON project</a>. We welcome any comments and feedback that you have and also materials that support or expand upon what's available on this site!.  
 
 ###Agenda
 
+to be added here
+
+###Participants
+
+To be added here
