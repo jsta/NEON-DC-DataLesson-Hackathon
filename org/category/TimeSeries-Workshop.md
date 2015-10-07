@@ -4,8 +4,9 @@ title: 'Time Series Lessons'
 category: time-series-workshop
 permalink: time-series-workshop/
 image:
-  feature: codedpoints2.png
-  credit: Colin Williams NEON, Inc.
+  feature: NEONCarpentryHeader_2.png
+  credit: National Ecological Observatory Network (NEON)
+  creditlink: http://www.neoninc.org
 ---
 
 Time series lessons are listed on this page.
