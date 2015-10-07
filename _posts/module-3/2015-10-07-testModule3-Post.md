@@ -6,7 +6,7 @@ authors: "FirstName LastName, FirstName LastName"
 dateCreated:  2014-11-26 20:49:52
 lastModified: 2015-07-23 14:28:52
 category: spatial-data-workshop
-tags: [module-1]
+tags: [module-3]
 description: "Brief lesson description."
 code1: rFileName.R
 image:
