@@ -1,17 +1,17 @@
 ---
 layout: post
-title: "Lesson Title Goes here"
+title: "Lesson 1 in Module 2 -  Title Goes here"
 date:   2015-1-26 20:49:52
 authors: "FirstName LastName, FirstName LastName"
 dateCreated:  2014-11-26 20:49:52
 lastModified: 2015-07-23 14:28:52
-category: time-series-workshop
+category: spatial-data-workshop
 tags: [module-2]
 description: "Brief lesson description."
 code1: rFileName.R
 image:
-  feature: lidar_GrandMesa.png
-  credit: LiDAR data collected over Grand Mesa, Colorado - National Ecological Observatory Network (NEON)
+  feature: NEONCarpentryHeader_2.png
+  credit: National Ecological Observatory Network (NEON)
   creditlink: http://www.neoninc.org
 permalink: 
 comments: true

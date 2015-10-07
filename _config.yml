@@ -3,12 +3,12 @@ description: 	Hackathon held October 21-23 in Boulder, CO at NEON headquarters.
 #Comment out url when working locally to resolve base urls correctly ok
 #use this when pushing to git for live version
 
-#url:      http://lwasser.github.io/NEON-DC-DataLesson-Hackathon
-#baseurl:	http://lwasser.github.io/NEON-DC-DataLesson-Hackathon
+url:      http://lwasser.github.io/NEON-DC-DataLesson-Hackathon
+baseurl:	http://lwasser.github.io/NEON-DC-DataLesson-Hackathon
 
 #use this when working locally
 #just uncomment the first localhost.
-url: http://localhost:4000
+#url: http://localhost:4000
 #baseurl: http://localhost:4000
 
 #we might not need comments here???
@@ -40,15 +40,22 @@ google_analytics:   UA-52746937-1
 # Links to include in top navigation
 # For external links add external: true
 links:  
-  - title: Data Tutorials
-    url: /activities/
+  - title: Potential Workshops
+    url: /workshops/
   
   - title: About
     url: /about/
     
+  - title: Agenda
+    url: /agenda/
+    
   - title: NEON Website
-    url: http://neoninc.org
+    url: http://www.neoninc.org
     external: true
+    
+  - title: Data Carpentry Website
+    url: http://www.datacarpentry.org
+    external: true  
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    America/Denver
