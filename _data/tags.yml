@@ -1,22 +1,17 @@
-- slug: lidar
-  name: LiDAR
+- slug: module-1
+  name: Raster and Vector Data
+  color: '#1abc9c'
   
-- slug: R
-  name: R programming
+- slug: module-2
+  name: Spatial Data Viz - Maps
+  color: '#1abc9c'
+   
+- slug: module-3
+  name: Time Series 
+  color: '#1abc9c' 
   
-- slug: GIS-Spatial-Data
-  name: Spatial Data & GIS
-
-- slug: HDF5
-  name: Hierarchical Data Formats (HDF5)
-  
-- slug: hyperspectral-remote-sensing
-  name: Hyperspectral Remote Sensing
-  
-- slug: data-viz
-  name: Data Visualization 
-  
-- slug: Data-Workshops
-  name: Data Workshops
+- slug: module-4
+  name: Remote Sensing
+  color: '#1abc9c'
   
   
