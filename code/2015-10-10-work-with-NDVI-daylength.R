@@ -53,10 +53,16 @@ allCropped <-  list.files(tifPath, full.names=TRUE)
 #create a raster stack from the list
 rastStack <- stack(allCropped)
 
+
+
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
 #would like to figure out how to plot these with 2-3 in each row rather than 4
 plot(rastStack, zlim=c(1500,10000))
+
+#adjust the layout
+par(mfrow=c(7,2))
 #plot histograms for each image
-hist(rastStack,xlim=c(1500,10000))
+hist(rastStack,xlim=c(1500,10000),nc=2)
 
 #create data frame, calculate NDVI
 ndvi.df <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
