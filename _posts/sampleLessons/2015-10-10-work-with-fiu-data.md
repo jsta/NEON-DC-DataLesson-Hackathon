@@ -276,3 +276,22 @@ NOTE: this is not NEON data - using it to have a fuller time series.
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-fiu-data/read-Daily-avg-3.png) 
+
+#plot soil temperature
+
+
+    #
+    #plot soil temp data 
+      
+    myPlot <- ggplot(yr.09.11_monAvg,aes(date, s10t)) +
+               geom_point() +
+               ggtitle("Daily Avg Soil Temp\nHarvard Forest") +
+               theme(plot.title = element_text(lineheight=.8, face="bold",size = 20)) +
+               theme(text = element_text(size=20)) +
+               xlab("Time") + ylab("Mean Soil Temp")
+    
+    #format x axis with dates
+    myPlot + scale_x_date(labels = date_format("%m/%d/%y"))
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-fiu-data/soil-temp-1.png) 
+

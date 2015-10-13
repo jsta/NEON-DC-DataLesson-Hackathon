@@ -268,3 +268,23 @@ myPlot <- ggplot(yr.09.11_monAvg,aes(date, part)) +
 myPlot + scale_x_date(labels = date_format("%m/%d/%y"))
 
 ```
+
+#plot soil temperature
+
+```{r soil-temp }
+
+#
+#plot soil temp data 
+  
+myPlot <- ggplot(yr.09.11_monAvg,aes(date, s10t)) +
+           geom_point() +
+           ggtitle("Daily Avg Soil Temp\nHarvard Forest") +
+           theme(plot.title = element_text(lineheight=.8, face="bold",size = 20)) +
+           theme(text = element_text(size=20)) +
+           xlab("Time") + ylab("Mean Soil Temp")
+
+#format x axis with dates
+myPlot + scale_x_date(labels = date_format("%m/%d/%y"))
+
+```
+

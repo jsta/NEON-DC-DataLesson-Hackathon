@@ -25,7 +25,8 @@ wd <- getwd()
 
 #specify the file to be knit and purled
 
-file <- "2015-10-10-work-with-fiu-data.Rmd"
+#file <- "2015-10-10-work-with-fiu-data.Rmd"
+file <- "2015-10-10-work-with-NDVI-daylength.Rmd"
 
 
 #copy .Rmd file to local working directory where the data are located
