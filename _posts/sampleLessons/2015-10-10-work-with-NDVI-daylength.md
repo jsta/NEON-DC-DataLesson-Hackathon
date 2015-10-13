@@ -29,16 +29,12 @@ CRS: UTM ZONE 18N FOR HARVARD
 
 
     #import imagery
-    baseImage <- stack("Landsat_TimeSeries/AOP/14060113_EH021656(20140601155722)-0263_ort.tif")
-
-    ## Error in .rasterObjectFromFile(x, objecttype = "RasterBrick", ...): Cannot create a RasterLayer object from this file. (file does not exist)
-
+    baseImage <- stack("AOP/14060113_EH021656(20140601155722)-0263_ort.tif")
+    
     #plot the image for the site
     plotRGB(baseImage,r=1,g=2,b=3, 
             main="Harvard Tower Site")
-
-    ## Error in plotRGB(baseImage, r = 1, g = 2, b = 3, main = "Harvard Tower Site"): error in evaluating the argument 'x' in selecting a method for function 'plotRGB': Error: object 'baseImage' not found
-
+    
     #add the shapefile 
     #note: read ogr is preferred as it maintains prj info
     squarePlot <- readOGR("Landsat_TimeSeries/","HarClip_UTMZ18")
@@ -51,7 +47,7 @@ CRS: UTM ZONE 18N FOR HARVARD
     #add the plot boundary to the image.
     plot(squarePlot, col="yellow", add=TRUE)
 
-    ## Error in polypath(x = mcrds[, 1], y = mcrds[, 2], border = border, col = col, : plot.new has not been called yet
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-NDVI-daylength/view-basemap-1.png) 
 
 
 #Crop the Base Image to the AOI
@@ -61,12 +57,10 @@ Concerned with size but i think a bit larger could be ok.
 
     #crop the image to the plot boundary?
     new <- crop(baseImage,squarePlot)
-
-    ## Error in crop(baseImage, squarePlot): error in evaluating the argument 'x' in selecting a method for function 'crop': Error: object 'baseImage' not found
-
+    
     plotRGB(new, axes=F,main="RGB image cropped")
 
-    ## Error in (function (classes, fdef, mtable) : unable to find an inherited method for function 'plotRGB' for signature '"function"'
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-NDVI-daylength/crop-image-1.png) 
 
     #not sure how to add a title to plotRGB??
     
@@ -74,8 +68,6 @@ Concerned with size but i think a bit larger could be ok.
     #write the geotiff - change overwrite=TRUE to overwrite=FALSE if you want to 
     #make sure you don't overwrite your files!
     writeRaster(new,"new","GTiff", overwrite=TRUE)
-
-    ## Error in (function (classes, fdef, mtable) : unable to find an inherited method for function 'writeRaster' for signature '"function", "character"'
 
 #Step 2
 
@@ -97,16 +89,16 @@ Import the NDVI time series.
     
     
     
-    layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+    #layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
     #would like to figure out how to plot these with 2-3 in each row rather than 4
-    plot(rastStack, zlim=c(1500,10000))
+    plot(rastStack, zlim=c(1500,10000),nc=3)
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-NDVI-daylength/process-NDVI-images-1.png) 
 
     #adjust the layout
     par(mfrow=c(7,2))
     #plot histograms for each image
-    hist(rastStack,xlim=c(1500,10000),nc=2)
+    hist(rastStack,xlim=c(1500,10000))
 
     ## Error in plot.new(): figure margins too large
 
@@ -180,7 +172,7 @@ Now, let's plot NDVI for one year
 
 ##The animated gif!
 
-![NDVI time series animation]({{ site.baseurl }}/images/rfigs.2015-10-10-work-with-NDVI-daylength/ndvi.gif)
+![NDVI time series animation]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-NDVI-daylength/ndvi.gif)
 
 Time series for NDVI for 2009 at Harvard Forest
 

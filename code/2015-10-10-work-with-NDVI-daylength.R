@@ -15,7 +15,7 @@ setwd("~/Documents/data/1_DataPortal_Workshop")
 ## ----view-basemap--------------------------------------------------------
 
 #import imagery
-baseImage <- stack("Landsat_TimeSeries/AOP/14060113_EH021656(20140601155722)-0263_ort.tif")
+baseImage <- stack("AOP/14060113_EH021656(20140601155722)-0263_ort.tif")
 
 #plot the image for the site
 plotRGB(baseImage,r=1,g=2,b=3, 
@@ -55,14 +55,14 @@ rastStack <- stack(allCropped)
 
 
 
-layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+#layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
 #would like to figure out how to plot these with 2-3 in each row rather than 4
-plot(rastStack, zlim=c(1500,10000))
+plot(rastStack, zlim=c(1500,10000),nc=3)
 
 #adjust the layout
 par(mfrow=c(7,2))
 #plot histograms for each image
-hist(rastStack,xlim=c(1500,10000),nc=2)
+hist(rastStack,xlim=c(1500,10000))
 
 #create data frame, calculate NDVI
 ndvi.df <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
