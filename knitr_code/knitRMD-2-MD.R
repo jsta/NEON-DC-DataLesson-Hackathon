@@ -18,14 +18,14 @@ if(.Platform$OS.type == "windows") {
 
 #this is the path where the lessons will be stored
 #you can modify i depending upon which module you are working on.
-repoCodePath <- "_posts/module-1"
+repoCodePath <- "_posts/sampleLessons"
 
 #get the working dir where the data are stored
 wd <- getwd()
 
 #specify the file to be knit and purled
 
-file <- "2015-06-08-RasterStack-RGB-Images-in-R-Using-HSI.Rmd"
+file <- "2015-10-10-work-with-fiu-data.Rmd"
 
 
 #copy .Rmd file to local working directory where the data are located
@@ -33,7 +33,7 @@ file <- "2015-06-08-RasterStack-RGB-Images-in-R-Using-HSI.Rmd"
 
 #specify where should the file go within the GH repo
 #postsDir <- ("_posts/SPATIALDATA/")
-postsDir <- ("_posts/HYPERSPECTRAL/")
+postsDir <- ("_posts/sampleLessons/")
 
 #define the file path
 imagePath <- "images/rfigs/"
@@ -84,7 +84,7 @@ paste0(wd,"/_posts")
 #copy image directory over
 file.copy(paste0(wd,"/",imagePath), paste0(gitRepoPath,"images/"), recursive=TRUE)
 #copy rmd file to the rmd directory on git
-file.copy(paste0(wd,"/",file), paste0(gitRepoPath,"code/R"), recursive=TRUE)
+file.copy(paste0(wd,"/",file), paste0(gitRepoPath,"code"), recursive=TRUE)
 
 #delete local repo copies of RMD files just so things are cleaned up??
 
