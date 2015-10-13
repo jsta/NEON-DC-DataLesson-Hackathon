@@ -61,7 +61,7 @@ plotData <- function(dat, xVar, yVar,plTitle,yaxTitle) {
 
 ## ----import-data---------------------------------------------------------
 #import barometric pressure data
-harBP <- read.csv("HarvardForest_4_2015_9_2015/bar-pressure/NEON.D01.HARV.DP1.00004.001.00000.000.025.030.BP_30min.csv")
+harBP <- read.csv("NEONdata_HarvardForest_4_2015_9_2015/bar-pressure/NEON.D01.HARV.DP1.00004.001.00000.000.025.030.BP_30min.csv")
 
 #convert times to posix class
 harBP <- fixDateTime(harBP,"startDateTime","endDateTime",tz="America/New_York")
@@ -73,7 +73,7 @@ plotData(harBP,"startDateTime","staPresMean",
          "Mean Barometric Pressure")
 
 #import single aspirated temperature data
-harTemp30 <- read.csv("HarvardForest_4_2015_9_2015/s-asp-temp/NEON.D01.HARV.DP1.00002.001.00000.000.040.030.SAAT_30min.csv")
+harTemp30 <- read.csv("NEONdata_HarvardForest_4_2015_9_2015/s-asp-temp/NEON.D01.HARV.DP1.00002.001.00000.000.040.030.SAAT_30min.csv")
 
 #convert times to posix class
 harTemp30 <- fixDateTime(harTemp30,"startDateTime","endDateTime",tz="America/New_York")
@@ -87,7 +87,7 @@ plotData(harTemp30,"startDateTime","tempSingleMean",
 
 ########################
 #import 30 minute PARPAR
-harPar30 <- read.csv("HarvardForest_4_2015_9_2015/PAR/NEON.D01.HARV.DP1.00024.001.00000.000.060.030.PARPAR_30min.csv")
+harPar30 <- read.csv("NEONdata_HarvardForest_4_2015_9_2015/PAR/NEON.D01.HARV.DP1.00024.001.00000.000.060.030.PARPAR_30min.csv")
 
 #convert times to posix class
 harPar30 <- fixDateTime(harPar30,"startDateTime","endDateTime",tz="America/New_York")
@@ -102,9 +102,6 @@ plotData(harPar30,"startDateTime","PARMean",
 
 ## ----import-harvard-met-data---------------------------------------------
 
-
-#set the working dir
-setwd("~/Documents/data/1_DataPortal_Workshop")
 
 #read in 15 min average data
 harMet <- read.csv(file="harvard_MetData/hf001-10-15min-m.csv")
@@ -154,7 +151,7 @@ myPlot <- ggplot(yr.09.11,aes(datetime, parr)) +
 #format x axis with dates
 myPlot + scale_x_datetime(labels = date_format("%m/%d/%y"))
 
-## ------------------------------------------------------------------------
+## ----plot-precip---------------------------------------------------------
 
 # Plot Precipitation
 myPlot <- ggplot(yr.09.11,aes(datetime, prec)) +

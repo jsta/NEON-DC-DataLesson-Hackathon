@@ -90,7 +90,7 @@ file.copy(paste0(wd,"/",file), paste0(gitRepoPath,"code"), recursive=TRUE)
 
 ## OUTPUT STUFF TO R ##
 #output code in R format
-rCodeOutput <- paste0(gitRepoPath,"code/R/", sub(".Rmd$", "", basename(input)), ".R")
+rCodeOutput <- paste0(gitRepoPath,"code/", sub(".Rmd$", "", basename(input)), ".R")
 rCodeOutput
 #purl the code to R
 purl(file, output = rCodeOutput)

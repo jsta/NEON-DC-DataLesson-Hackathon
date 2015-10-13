@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "The Basics of LiDAR - Light Detection and Ranging - Remote Sensing"
+title:  "Working with NEON (like) Met Station Time Series Data"
 date:   2014-07-21 20:49:52
 output: html_document
 permalink: /R/tower-data/
@@ -86,70 +86,55 @@ A function that deals with both the date issue (UCT to local) and plots the data
 
 
     #import barometric pressure data
-    harBP <- read.csv("HarvardForest_4_2015_9_2015/bar-pressure/NEON.D01.HARV.DP1.00004.001.00000.000.025.030.BP_30min.csv")
-
-    ## Warning in file(file, "rt"): cannot open file 'HarvardForest_4_2015_9_2015/
-    ## bar-pressure/NEON.D01.HARV.DP1.00004.001.00000.000.025.030.BP_30min.csv':
-    ## No such file or directory
-
-    ## Error in file(file, "rt"): cannot open the connection
-
+    harBP <- read.csv("NEONdata_HarvardForest_4_2015_9_2015/bar-pressure/NEON.D01.HARV.DP1.00004.001.00000.000.025.030.BP_30min.csv")
+    
     #convert times to posix class
     harBP <- fixDateTime(harBP,"startDateTime","endDateTime",tz="America/New_York")
-
-    ## Error in gsub("T|Z", " ", dateField): object 'harBP' not found
-
+    
+    
     #plot the data
     plotData(harBP,"startDateTime","staPresMean", 
              "NEON Barometric Pressure\nHarvard Forest",
              "Mean Barometric Pressure")
 
-    ## Error in ggplot(dat, aes_string(x = xVar, y = yVar)): object 'harBP' not found
+    ## Warning: Removed 450 rows containing missing values (geom_point).
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-fiu-data/import-data-1.png) 
 
     #import single aspirated temperature data
-    harTemp30 <- read.csv("HarvardForest_4_2015_9_2015/s-asp-temp/NEON.D01.HARV.DP1.00002.001.00000.000.040.030.SAAT_30min.csv")
-
-    ## Warning in file(file, "rt"): cannot open file 'HarvardForest_4_2015_9_2015/
-    ## s-asp-temp/NEON.D01.HARV.DP1.00002.001.00000.000.040.030.SAAT_30min.csv':
-    ## No such file or directory
-
-    ## Error in file(file, "rt"): cannot open the connection
-
+    harTemp30 <- read.csv("NEONdata_HarvardForest_4_2015_9_2015/s-asp-temp/NEON.D01.HARV.DP1.00002.001.00000.000.040.030.SAAT_30min.csv")
+    
     #convert times to posix class
     harTemp30 <- fixDateTime(harTemp30,"startDateTime","endDateTime",tz="America/New_York")
-
-    ## Error in gsub("T|Z", " ", dateField): object 'harTemp30' not found
-
+    
+    
     #plot the data
     #note there are missing data for May
     plotData(harTemp30,"startDateTime","tempSingleMean", 
              "NEON Single Aspirated Temperature\nHarvard Forest",
              "Mean Temperature")
 
-    ## Error in ggplot(dat, aes_string(x = xVar, y = yVar)): object 'harTemp30' not found
+    ## Warning: Removed 3761 rows containing missing values (geom_point).
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-fiu-data/import-data-2.png) 
 
     ########################
     #import 30 minute PARPAR
-    harPar30 <- read.csv("HarvardForest_4_2015_9_2015/PAR/NEON.D01.HARV.DP1.00024.001.00000.000.060.030.PARPAR_30min.csv")
-
-    ## Warning in file(file, "rt"): cannot open file 'HarvardForest_4_2015_9_2015/
-    ## PAR/NEON.D01.HARV.DP1.00024.001.00000.000.060.030.PARPAR_30min.csv': No
-    ## such file or directory
-
-    ## Error in file(file, "rt"): cannot open the connection
-
+    harPar30 <- read.csv("NEONdata_HarvardForest_4_2015_9_2015/PAR/NEON.D01.HARV.DP1.00024.001.00000.000.060.030.PARPAR_30min.csv")
+    
     #convert times to posix class
     harPar30 <- fixDateTime(harPar30,"startDateTime","endDateTime",tz="America/New_York")
-
-    ## Error in gsub("T|Z", " ", dateField): object 'harPar30' not found
-
+    
+    
     #plot the data
     #note there are missing data for May
     plotData(harPar30,"startDateTime","PARMean", 
              "NEON PAR - 30 Min\nHarvard Forest",
              "Mean PAR")
 
-    ## Error in ggplot(dat, aes_string(x = xVar, y = yVar)): object 'harPar30' not found
+    ## Warning: Removed 634 rows containing missing values (geom_point).
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-fiu-data/import-data-3.png) 
 
 
 #Imported from the harvard tower 
@@ -162,9 +147,6 @@ http://harvardforest.fas.harvard.edu:8080/exist/apps/datasets/showData.html?id=h
 NOTE: this is not NEON data - using it to have a fuller time series.
 
 
-    #set the working dir
-    setwd("~/Documents/data/1_DataPortal_Workshop")
-    
     #read in 15 min average data
     harMet <- read.csv(file="harvard_MetData/hf001-10-15min-m.csv")
     
@@ -235,7 +217,7 @@ NOTE: this is not NEON data - using it to have a fuller time series.
     #format x axis with dates
     myPlot + scale_x_datetime(labels = date_format("%m/%d/%y"))
 
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-fiu-data/unnamed-chunk-1-1.png) 
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-fiu-data/plot-precip-1.png) 
 
 
 
