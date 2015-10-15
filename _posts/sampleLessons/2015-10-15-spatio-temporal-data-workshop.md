@@ -74,14 +74,13 @@ CRS: UTM ZONE 18N FOR HARVARD
     #import imagery
     chm <- raster("NEON_RemoteSensing/HARV/CHM/HARV_chmCrop.tif")
     #plot chm (make map?)
-    plot(chm, main="NEON Canopy Height Model\nHarvard Forest")
+    plot(chm, main="NEON Canopy Height Model (Tree Height)\nHarvard Forest")
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/view-basemap-1.png) 
 
     #customize legend, add units (m), remove x and y labels
-    
-    
-    
+
+
     ################### IMPORT MULTI BAND RASTER (image) #########################
     #note that when you import a multi band image you have to import it as a stack 
     #rather than a raster... this might be worth pointing out in the lesson.
@@ -135,7 +134,7 @@ CRS: UTM ZONE 18N FOR HARVARD
     #Note: leah needs to fix the crop box to make it UTM z18 friendly! it will happen.
     plot(squarePlot, col="yellow", add=TRUE)
 
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/view-basemap-2.png) 
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/import-rgb-image-1.png) 
 
 
 #Crop the Base Image to the AOI
@@ -233,7 +232,7 @@ Import the NDVI time series.
       ndvi.df$meanNDVI[i] <- cellStats(imageCrop,mean) 
       
       #grab julian days
-      ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-16,nchar(crop)-14)
+      ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
     }
     
     ndvi.df$yr <- as.integer(2009)
@@ -300,8 +299,6 @@ The data are very interesting!
     #plot histograms for each image
     hist(rastStack,xlim=c(1500,10000))
 
-    ## Warning in .local(x, ...): only the first 16 layers are plotted
-
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-2.png) 
 
     #create data frame, calculate NDVI
@@ -317,7 +314,7 @@ The data are very interesting!
       ndvi.df$meanNDVI[i] <- cellStats(imageCrop,mean) 
       
       #grab julian days
-      ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-16,nchar(crop)-14)
+      ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
     }
     
     ndvi.df$yr <- as.integer(2011)
@@ -442,8 +439,6 @@ Otherwise it is too big to work with.
     #format x axis with dates
     myPlot + scale_x_datetime(labels = date_format("%m/%d/%y"))
 
-    ## Warning: Removed 2 rows containing missing values (geom_point).
-
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/import-harvard-met-data-15min-1.png) 
 
 #convert the data to daily average
@@ -527,8 +522,6 @@ But calculating a daily average could be very useful! Just in case - we can incl
     #format x axis with dates
     myPlot + scale_x_date(labels = date_format("%m/%d/%y"))
 
-    ## Warning: Removed 1 rows containing missing values (geom_point).
-
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/read-Daily-avg-3.png) 
 
 #plot soil temperature
@@ -565,21 +558,11 @@ NOTE - i need to get the data from 2009-2011 to align with the Landsat Time Seri
     library(lubridate)
     #readr is ideal to open fixed width files (faster than utils)
     library(readr)
-
-    ## 
-    ## Attaching package: 'readr'
-    ## 
-    ## The following objects are masked from 'package:scales':
-    ## 
-    ##     col_factor, col_numeric
-
+    
     #read in fixed width file  
     dayLengthHar2011 <- read.fwf(
       file="precip_Daylength/Petersham_Mass_2011.txt",
       widths=c(8,9,9,9,9,9,9,9,9,9,9,9,9))
-
-    ## Warning in file(file, "rt"): cannot open file 'precip_Daylength/
-    ## Petersham_Mass_2011.txt': No such file or directory
 
     ## Error in file(file, "rt"): cannot open the connection
 

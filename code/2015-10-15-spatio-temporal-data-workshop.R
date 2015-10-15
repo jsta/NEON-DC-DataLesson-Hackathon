@@ -18,12 +18,13 @@ setwd("~/Documents/data/1_DataPortal_Workshop")
 #import imagery
 chm <- raster("NEON_RemoteSensing/HARV/CHM/HARV_chmCrop.tif")
 #plot chm (make map?)
-plot(chm, main="NEON Canopy Height Model\nHarvard Forest")
+plot(chm, main="NEON Canopy Height Model (Tree Height)\nHarvard Forest")
 
 #customize legend, add units (m), remove x and y labels
 
 
 
+## ----import-rgb-image----------------------------------------------------
 ################### IMPORT MULTI BAND RASTER (image) #########################
 #note that when you import a multi band image you have to import it as a stack 
 #rather than a raster... this might be worth pointing out in the lesson.
@@ -111,7 +112,7 @@ for (crop in allCropped){
   ndvi.df$meanNDVI[i] <- cellStats(imageCrop,mean) 
   
   #grab julian days
-  ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-16,nchar(crop)-14)
+  ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
 }
 
 ndvi.df$yr <- as.integer(2009)
@@ -166,7 +167,7 @@ for (crop in allCropped){
   ndvi.df$meanNDVI[i] <- cellStats(imageCrop,mean) 
   
   #grab julian days
-  ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-16,nchar(crop)-14)
+  ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
 }
 
 ndvi.df$yr <- as.integer(2011)
