@@ -96,10 +96,10 @@ CRS: UTM ZONE 18N FOR HARVARD
     
     #Import the shapefile 
     #note: read ogr is preferred as it maintains prj info
-    squarePlot <- readOGR("Landsat_TimeSeries/","HarClip_UTMZ18")
+    squarePlot <- readOGR("NDVI/","HarClip_UTMZ18")
 
     ## OGR data source with driver: ESRI Shapefile 
-    ## Source: "Landsat_TimeSeries/", layer: "HarClip_UTMZ18"
+    ## Source: "NDVI/", layer: "HarClip_UTMZ18"
     ## with 1 features
     ## It has 1 fields
 
@@ -173,6 +173,7 @@ Concerned with size but i think a bit larger could be ok.
 
 
 
+    #might have stuff about storing data
 
 #Working with Raster Time Series Data
 
@@ -194,10 +195,10 @@ Import the NDVI time series.
 
 
     #define the path to write tiffs
-    #the other time series for the california sites is in Landsat_TimeSeries/D17
+    #the other time series for the california sites is in NDVI/D17
     #Note: if it's best we can also remove the nesting of folders here. I left it
     #just to remember where i got the data from originally! i can just include a note to myself.
-    tifPath <- "Landsat_TimeSeries/D01/LS5/P12R31/2011/"
+    tifPath <- "NDVI/HARV/2011/"
     
     #open up the cropped files
     #create list of files to make raster stack
@@ -210,7 +211,7 @@ Import the NDVI time series.
     #would like to figure out how to plot these with 2-3 in each row rather than 4
     plot(rastStack, zlim=c(1500,10000),nc=3)
 
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-1.png) 
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-HARV-1.png) 
 
     #adjust the layout
     #par(mfrow=c(7,2))
@@ -238,7 +239,7 @@ Import the NDVI time series.
     ndvi.df$yr <- as.integer(2009)
     ndvi.df$site <- "HARV"
 
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-2.png) 
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-HARV-2.png) 
 
 #PLOT NDVI for 2011
 
@@ -260,15 +261,80 @@ the remote sensing group to cover this.
     #cloud cover)
     ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
       geom_point(size=4,colour = "blue") + 
-      ggtitle("NDVI for 2011\nLandsat Derived") +
+      ggtitle("NDVI for HARVARD forest 2011\nLandsat Derived") +
       xlab("Julian Days") + ylab("Mean NDVI") +
       theme(text = element_text(size=20))
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/plot-mean-NDVI-1.png) 
 
 
-##NOTE: there are data for another site as well. it's a pretty cool comparison to 
-see the diference in NDVI values between sites.
+
+#Below is the same analysis for another site for the same time period!
+THe data are for california field site san Joachin experimental range.
+This might be an option additional activity to compare the two! Note
+that hte NDVI values are generally lower as it's a scrubby medit environment.
+We can include pictures!
+The data are very interesting!
+
+
+    #define the path to write tiffs
+    tifPath <- "NDVI/SJER/2011/"
+    
+    #open up the cropped files
+    #create list of files to make raster stack
+    allCropped <-  list.files(tifPath, full.names=TRUE, pattern = ".tif$")
+    
+    #create a raster stack from the list
+    rastStack <- stack(allCropped)
+    
+    #layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+    #would like to figure out how to plot these with 2-3 in each row rather than 4
+    plot(rastStack, zlim=c(1500,10000),nc=3)
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-1.png) 
+
+    #adjust the layout
+    #par(mfrow=c(7,2))
+    #not sure how to plot fewer columns without throwing errors
+    
+    #plot histograms for each image
+    hist(rastStack,xlim=c(1500,10000))
+
+    ## Warning in .local(x, ...): only the first 16 layers are plotted
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-2.png) 
+
+    #create data frame, calculate NDVI
+    ndvi.df <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
+    colnames(ndvi.df) <- c("julianDays", "meanNDVI")
+    i <- 0
+    for (crop in allCropped){
+      i=i+1
+      #open raster
+      imageCrop <- raster(crop)
+      
+      #calculate the mean of each
+      ndvi.df$meanNDVI[i] <- cellStats(imageCrop,mean) 
+      
+      #grab julian days
+      ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-16,nchar(crop)-14)
+    }
+    
+    ndvi.df$yr <- as.integer(2011)
+    ndvi.df$site <- "SJER"
+    
+    #plot NDVI
+    ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
+      geom_point(size=4,colour = "blue") + 
+      ggtitle("NDVI for SJER 2011\nLandsat Derived") +
+      xlab("Julian Days") + ylab("Mean NDVI") +
+      theme(text = element_text(size=20))
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-3.png) 
+
+#Animated Gifs of Time Series in R!
+
+Below is simple code to create an animation from a rasterstack.
 
 
     #create animation ot the NDVI outputs
@@ -291,12 +357,14 @@ see the diference in NDVI values between sites.
     ## 'convert' -loop 0 -delay 50 Rplot1.png Rplot2.png Rplot3.png
     ##     Rplot4.png Rplot5.png Rplot6.png Rplot7.png Rplot8.png
     ##     Rplot9.png Rplot10.png Rplot11.png Rplot12.png Rplot13.png
-    ##     'ndvi.gif'
+    ##     Rplot14.png Rplot15.png Rplot16.png Rplot17.png 'ndvi.gif'
     ## Output at: ndvi.gif
 
     ## [1] TRUE
 
     #}
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/create-animation-1.png) 
 
 ##The animated gif!
 
@@ -304,6 +372,9 @@ see the diference in NDVI values between sites.
 
 Time series for NDVI for 2011 at Harvard Forest
 #note it is easy to get more years as well! 
+
+
+    #the end of this section  
 
 #Working with CSV format Time Series Data
 
@@ -480,6 +551,106 @@ But calculating a daily average could be very useful! Just in case - we can incl
 
 ###Convert to Julian days
 
+
+
+
+
+
+#Look at Day Length Data for Harvard
+
+NOTE - i need to get the data from 2009-2011 to align with the Landsat Time Series
+
+
+    #load the lubridate package to work with time
+    library(lubridate)
+    #readr is ideal to open fixed width files (faster than utils)
+    library(readr)
+
+    ## 
+    ## Attaching package: 'readr'
+    ## 
+    ## The following objects are masked from 'package:scales':
+    ## 
+    ##     col_factor, col_numeric
+
+    #read in fixed width file  
+    dayLengthHar2011 <- read.fwf(
+      file="precip_Daylength/Petersham_Mass_2011.txt",
+      widths=c(8,9,9,9,9,9,9,9,9,9,9,9,9))
+
+    ## Warning in file(file, "rt"): cannot open file 'precip_Daylength/
+    ## Petersham_Mass_2011.txt': No such file or directory
+
+    ## Error in file(file, "rt"): cannot open the connection
+
+    names(dayLengthHar2011) <- c("Day","Jan","Feb","Mar","Apr",
+                                 "May","June","July","Aug","Sept",
+                                 "Oct","Nov","Dec") 
+
+    ## Error in names(dayLengthHar2011) <- c("Day", "Jan", "Feb", "Mar", "Apr", : object 'dayLengthHar2011' not found
+
+    #open file  
+    #dayLengthHar2015 <- read.csv(file = "precip_Daylength/Petersham_Mass_2009.txt", stringsAsFactors = FALSE)
+    
+    #just pull out the columns with time information
+    tempDF <- dayLengthHar2011[,2:13]
+
+    ## Error in eval(expr, envir, enclos): object 'dayLengthHar2011' not found
+
+    tempDF[] <- lapply(tempDF, function(x){hm(x)$hour + hm(x)$minute/60})
+
+    ## Error in lapply(tempDF, function(x) {: object 'tempDF' not found
+
+    #populate original DF with the new time data in decimal hours 
+    dayLengthHar2011[,2:13] <- tempDF
+
+    ## Error in eval(expr, envir, enclos): object 'tempDF' not found
+
+    #plot One MOnth of  data
+    ggplot(dayLengthHar2011, aes(Day, Jan)) +
+      geom_point()+
+      ggtitle("Day Length\nJan 2009") +
+      xlab("Day of Month") + ylab("Day Length (Hours)") +
+      theme(text = element_text(size=20))
+
+    ## Error in ggplot(dayLengthHar2011, aes(Day, Jan)): object 'dayLengthHar2011' not found
+
+#Convert to Julian Days and Plot
+
+Next, plot full year's worth of daylength for 2011.
+Note: this could be turned into a function to do multiple files.
+
+
+    #convert to julian days
+    
+    #stack the data frame
+    dayLengthHar2011.st <- stack(dayLengthHar2011[2:13])
+
+    ## Error in stack(dayLengthHar2011[2:13]): error in evaluating the argument 'x' in selecting a method for function 'stack': Error: object 'dayLengthHar2011' not found
+
+    #remove NA values
+    dayLengthHar2011.st <- dayLengthHar2011.st[complete.cases(dayLengthHar2011.st),]
+
+    ## Error in eval(expr, envir, enclos): object 'dayLengthHar2011.st' not found
+
+    #add julian days (count)
+    dayLengthHar2011.st$JulianDay<-seq.int(nrow(dayLengthHar2011.st))
+
+    ## Error in nrow(dayLengthHar2011.st): error in evaluating the argument 'x' in selecting a method for function 'nrow': Error: object 'dayLengthHar2011.st' not found
+
+    #fix names
+    names(dayLengthHar2011.st) <- c("Hours","Month","JulianDay")
+
+    ## Error in names(dayLengthHar2011.st) <- c("Hours", "Month", "JulianDay"): object 'dayLengthHar2011.st' not found
+
+    #plot Years Worth of  data
+    ggplot(dayLengthHar2011.st, aes(JulianDay,Hours)) +
+      geom_point()+
+      ggtitle("Day Length\nJan 2011") +
+      xlab("Julian Days") + ylab("Day Length (Hours)") +
+      theme(text = element_text(size=20))
+
+    ## Error in ggplot(dayLengthHar2011.st, aes(JulianDay, Hours)): object 'dayLengthHar2011.st' not found
 
 
 

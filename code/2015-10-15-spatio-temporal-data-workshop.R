@@ -38,7 +38,7 @@ plotRGB(baseImage,r=1,g=2,b=3,
 
 #Import the shapefile 
 #note: read ogr is preferred as it maintains prj info
-squarePlot <- readOGR("Landsat_TimeSeries/","HarClip_UTMZ18")
+squarePlot <- readOGR("NDVI/","HarClip_UTMZ18")
 
 #view attributes
 squarePlot
@@ -68,17 +68,17 @@ writeRaster(new,"new","GTiff", overwrite=TRUE)
 
 
 ## ----project-organization------------------------------------------------
+#might have stuff about storing data
 
 
 
-
-## ----process-NDVI-images-------------------------------------------------
+## ----process-NDVI-images-HARV--------------------------------------------
 
 #define the path to write tiffs
-#the other time series for the california sites is in Landsat_TimeSeries/D17
+#the other time series for the california sites is in NDVI/D17
 #Note: if it's best we can also remove the nesting of folders here. I left it
 #just to remember where i got the data from originally! i can just include a note to myself.
-tifPath <- "Landsat_TimeSeries/D01/LS5/P12R31/2011/"
+tifPath <- "NDVI/HARV/2011/"
 
 #open up the cropped files
 #create list of files to make raster stack
@@ -125,7 +125,57 @@ ndvi.df$site <- "HARV"
 #cloud cover)
 ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
   geom_point(size=4,colour = "blue") + 
-  ggtitle("NDVI for 2011\nLandsat Derived") +
+  ggtitle("NDVI for HARVARD forest 2011\nLandsat Derived") +
+  xlab("Julian Days") + ylab("Mean NDVI") +
+  theme(text = element_text(size=20))
+
+
+## ----process-NDVI-images-SJER--------------------------------------------
+
+#define the path to write tiffs
+tifPath <- "NDVI/SJER/2011/"
+
+#open up the cropped files
+#create list of files to make raster stack
+allCropped <-  list.files(tifPath, full.names=TRUE, pattern = ".tif$")
+
+#create a raster stack from the list
+rastStack <- stack(allCropped)
+
+#layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+#would like to figure out how to plot these with 2-3 in each row rather than 4
+plot(rastStack, zlim=c(1500,10000),nc=3)
+
+#adjust the layout
+#par(mfrow=c(7,2))
+#not sure how to plot fewer columns without throwing errors
+
+#plot histograms for each image
+hist(rastStack,xlim=c(1500,10000))
+
+#create data frame, calculate NDVI
+ndvi.df <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
+colnames(ndvi.df) <- c("julianDays", "meanNDVI")
+i <- 0
+for (crop in allCropped){
+  i=i+1
+  #open raster
+  imageCrop <- raster(crop)
+  
+  #calculate the mean of each
+  ndvi.df$meanNDVI[i] <- cellStats(imageCrop,mean) 
+  
+  #grab julian days
+  ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-16,nchar(crop)-14)
+}
+
+ndvi.df$yr <- as.integer(2011)
+ndvi.df$site <- "SJER"
+
+#plot NDVI
+ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
+  geom_point(size=4,colour = "blue") + 
+  ggtitle("NDVI for SJER 2011\nLandsat Derived") +
   xlab("Julian Days") + ylab("Mean NDVI") +
   theme(text = element_text(size=20))
 
@@ -149,6 +199,10 @@ library(animation)
     interval=.5)
 #}
 
+
+## ------------------------------------------------------------------------
+#the end of this section  
+  
 
 ## ----load-libraries-date-function----------------------------------------
 
@@ -291,6 +345,60 @@ myPlot + scale_x_date(labels = date_format("%m/%d/%y"))
 
 
 ## ------------------------------------------------------------------------
+
+
+## ----Clean-Up-Day-Length-------------------------------------------------
+
+#load the lubridate package to work with time
+library(lubridate)
+#readr is ideal to open fixed width files (faster than utils)
+library(readr)
+
+#read in fixed width file  
+dayLengthHar2011 <- read.fwf(
+  file="precip_Daylength/Petersham_Mass_2011.txt",
+  widths=c(8,9,9,9,9,9,9,9,9,9,9,9,9))
+ 
+names(dayLengthHar2011) <- c("Day","Jan","Feb","Mar","Apr",
+                             "May","June","July","Aug","Sept",
+                             "Oct","Nov","Dec") 
+#open file  
+#dayLengthHar2015 <- read.csv(file = "precip_Daylength/Petersham_Mass_2009.txt", stringsAsFactors = FALSE)
+
+#just pull out the columns with time information
+tempDF <- dayLengthHar2011[,2:13]
+tempDF[] <- lapply(tempDF, function(x){hm(x)$hour + hm(x)$minute/60})
+#populate original DF with the new time data in decimal hours 
+dayLengthHar2011[,2:13] <- tempDF
+
+#plot One MOnth of  data
+ggplot(dayLengthHar2011, aes(Day, Jan)) +
+  geom_point()+
+  ggtitle("Day Length\nJan 2009") +
+  xlab("Day of Month") + ylab("Day Length (Hours)") +
+  theme(text = element_text(size=20))
+
+
+
+## ----plot-daylength------------------------------------------------------
+
+#convert to julian days
+
+#stack the data frame
+dayLengthHar2011.st <- stack(dayLengthHar2011[2:13])
+#remove NA values
+dayLengthHar2011.st <- dayLengthHar2011.st[complete.cases(dayLengthHar2011.st),]
+#add julian days (count)
+dayLengthHar2011.st$JulianDay<-seq.int(nrow(dayLengthHar2011.st))
+#fix names
+names(dayLengthHar2011.st) <- c("Hours","Month","JulianDay")
+
+#plot Years Worth of  data
+ggplot(dayLengthHar2011.st, aes(JulianDay,Hours)) +
+  geom_point()+
+  ggtitle("Day Length\nJan 2011") +
+  xlab("Julian Days") + ylab("Day Length (Hours)") +
+  theme(text = element_text(size=20))
 
 
 ## ----data-viz------------------------------------------------------------
