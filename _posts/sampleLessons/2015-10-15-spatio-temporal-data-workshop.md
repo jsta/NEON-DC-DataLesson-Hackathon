@@ -16,10 +16,7 @@ permalink: /R/spatio-temporal/
 </div>
 </section><!-- /#table-of-contents -->
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 9cf36c02d0b6179e65890489943daf3746f3f50d
 #Overview
 
 ##Persona
@@ -200,10 +197,7 @@ ogr is better than maptools (IMO) :) ... why
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/work-with-vectors-2.png) 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 9cf36c02d0b6179e65890489943daf3746f3f50d
 ###Crop the Base Image to the AOI
 
 This is the area used to clip the NDVI data from. We can expand it a bit.
@@ -225,30 +219,8 @@ Concerned with size but i think a bit larger could be ok.
     #make sure you don't overwrite your files!
     writeRaster(new,"new","GTiff", overwrite=TRUE)
 
-<<<<<<< HEAD
 
 #P2b. Working with Raster Time Series Data
-=======
-#P2 Project Organization & Metadata
-
-**Goal:** Participants will understand how to organize a project with geospatial data and what metadata are most important to look at.
-
-##Learning Objectives:
-
-* Know how to look up and grab key attributes of a shapefile in R (extent, CRS)
-* Know how to look up and grab key attributes of a raster in R (extent, CRS)
-* Understand CRS (coordinate reference systems)
-* Know how to reproject files when they don’t line up
-* Understand the files associated with a shapefile.
-
-
-
-    ###might have stuff about storing data
-
-#P3 Working with Raster Time Series Data
-
-NOTE: this could be part of P2 above!
->>>>>>> 9cf36c02d0b6179e65890489943daf3746f3f50d
 
 Goal: Participants will know how to work with, extract values from  and plot a set of rasters in R.
 
@@ -408,11 +380,7 @@ The data are very interesting!
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-3.png) 
 
-<<<<<<< HEAD
 ##Animated Gifs of Time Series in R!
-=======
-###Animated Gifs of Time Series in R!
->>>>>>> 9cf36c02d0b6179e65890489943daf3746f3f50d
 
 Below is simple code to create an animation from a rasterstack.
 
@@ -446,7 +414,7 @@ Below is simple code to create an animation from a rasterstack.
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/create-animation-1.png) 
 
-###The animated gif!
+##The animated gif!
 
 ![NDVI time series animation]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-NDVI-daylength/ndvi.gif)
 
@@ -469,7 +437,6 @@ Time series for NDVI for 2011 at Harvard Forest
 
     #the end of this section  
 
-<<<<<<< HEAD
 
 #P3. Project Organization & Metadata
 
@@ -495,9 +462,6 @@ Time series for NDVI for 2011 at Harvard Forest
     #crs and metadata in the geospatial world is also important...
 
 #P4. Working with CSV format Time Series Data
-=======
-#P5 Working with CSV format Time Series Data
->>>>>>> 9cf36c02d0b6179e65890489943daf3746f3f50d
 
 **Goal:** Participants will know how to open, clean and plot quantitative time series data within  a text file.
 
@@ -588,11 +552,7 @@ Otherwise it is too big to work with.
     #myPlot + scale_x_date(labels = date_format("%m/%d/%y"))
 
 
-<<<<<<< HEAD
 ##Dealing with just date.
-=======
-###Dealing with just date.
->>>>>>> 9cf36c02d0b6179e65890489943daf3746f3f50d
 
 the POSIX format is good to go over...One option could be to do the averaging to 
 daily on the data above. But you might need to smooth it so it could get complicated?
@@ -680,13 +640,7 @@ But calculating a daily average could be very useful! Just in case - we can incl
 
 
 
-<<<<<<< HEAD
 ##Look at Day Length Data for Harvard
-=======
-
-
-###Look at Day Length Data for Harvard
->>>>>>> 9cf36c02d0b6179e65890489943daf3746f3f50d
 
 NOTE - i need to get the data from 2009-2011 to align with the Landsat Time Series
 
