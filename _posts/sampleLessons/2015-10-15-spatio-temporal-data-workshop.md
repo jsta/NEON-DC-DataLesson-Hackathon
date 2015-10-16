@@ -74,7 +74,7 @@ add!
     setwd("~/Documents/data/1_DataPortal_Workshop")
 
 
-#First plot the basemap to see where the tower boundary is. 
+###First plot the basemap to see where the tower boundary is. 
 
 Note, this will require opening up the geotiff imagery for the site.
 Then plotting 
@@ -148,7 +148,7 @@ CRS: UTM ZONE 18N FOR HARVARD
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/import-rgb-image-1.png) 
 
 
-#Crop the Base Image to the AOI
+###Crop the Base Image to the AOI
 
 This is the area used to clip the NDVI data from. We can expand it a bit.
 Concerned with size but i think a bit larger could be ok.
@@ -169,7 +169,7 @@ Concerned with size but i think a bit larger could be ok.
     #make sure you don't overwrite your files!
     writeRaster(new,"new","GTiff", overwrite=TRUE)
 
-#Project Organization & Metadata
+#P2 Project Organization & Metadata
 
 **Goal:** Participants will understand how to organize a project with geospatial data and what metadata are most important to look at.
 
@@ -183,9 +183,9 @@ Concerned with size but i think a bit larger could be ok.
 
 
 
-    #might have stuff about storing data
+    ###might have stuff about storing data
 
-#Working with Raster Time Series Data
+#P3 Working with Raster Time Series Data
 
 NOTE: this could be part of P2 above!
 
@@ -251,7 +251,7 @@ Import the NDVI time series.
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-HARV-2.png) 
 
-#PLOT NDVI for 2011
+###PLOT NDVI for 2011
 
 NOTE: will add tiles for 2009-2010 - have 30 years but that is a lot!
 #should we expand the extent or not?
@@ -340,7 +340,7 @@ The data are very interesting!
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-3.png) 
 
-#Animated Gifs of Time Series in R!
+###Animated Gifs of Time Series in R!
 
 Below is simple code to create an animation from a rasterstack.
 
@@ -374,7 +374,7 @@ Below is simple code to create an animation from a rasterstack.
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/create-animation-1.png) 
 
-##The animated gif!
+###The animated gif!
 
 ![NDVI time series animation]({{ site.baseurl }}/images/rfigs/2015-10-10-work-with-NDVI-daylength/ndvi.gif)
 
@@ -384,7 +384,7 @@ Time series for NDVI for 2011 at Harvard Forest
 
     #the end of this section  
 
-#Working with CSV format Time Series Data
+#P5 Working with CSV format Time Series Data
 
 **Goal:** Participants will know how to open, clean and plot quantitative time series data within  a text file.
 
@@ -472,7 +472,7 @@ Otherwise it is too big to work with.
     #myPlot + scale_x_date(labels = date_format("%m/%d/%y"))
 
 
-#Dealing with just date.
+###Dealing with just date.
 
 the POSIX format is good to go over...One option could be to do the averaging to 
 daily on the data above. But you might need to smooth it so it could get complicated?
@@ -535,7 +535,7 @@ But calculating a daily average could be very useful! Just in case - we can incl
 
 ![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/read-Daily-avg-3.png) 
 
-#plot soil temperature
+###plot soil temperature
 
 
     #
@@ -560,7 +560,7 @@ But calculating a daily average could be very useful! Just in case - we can incl
 
 
 
-#Look at Day Length Data for Harvard
+###Look at Day Length Data for Harvard
 
 NOTE - i need to get the data from 2009-2011 to align with the Landsat Time Series
 
@@ -609,7 +609,7 @@ NOTE - i need to get the data from 2009-2011 to align with the Landsat Time Seri
 
     ## Error in ggplot(dayLengthHar2011, aes(Day, Jan)): object 'dayLengthHar2011' not found
 
-#Convert to Julian Days and Plot
+###Convert to Julian Days and Plot
 
 Next, plot full year's worth of daylength for 2011.
 Note: this could be turned into a function to do multiple files.
