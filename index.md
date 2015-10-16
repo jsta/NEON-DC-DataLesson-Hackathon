@@ -1,6 +1,6 @@
 ---
 layout: home
-description: "A site devoted to open science and open data."
+description: "Spatio-temporal data lesson hackathon landing page."
 Tags: []
 image:
   feature: NEONCarpentryHeader_2.png
@@ -13,12 +13,20 @@ image:
 
 ###October 21-23 2015
 
-Will revise this text.
+
+Welcome to the hackathon landing page!
 
 
 ###Agenda
 
-to be added here
+[AGENDA here]({{ site_baseurl }}/agenda/)
+
+###Link to sample lesson shell
+
+The page below illustrates what the code might look like for the lessons that we are building!
+
+[Sample Lesson Shell]({{ site_baseurl }}R/spatio-temporal/)
+
 
 ###Participants
 

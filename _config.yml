@@ -40,9 +40,6 @@ google_analytics:   UA-52746937-1
 # Links to include in top navigation
 # For external links add external: true
 links:  
-  - title: Potential Workshops
-    url: /workshops/
-  
   - title: About
     url: /about/
     
@@ -76,7 +73,7 @@ kramdown:
   auto_ids: true
   footnote_nr: 1
   entity_output: as_char
-  toc_levels: 1..2
+  toc_levels: 1..1
   use_coderay: false
 
   coderay:

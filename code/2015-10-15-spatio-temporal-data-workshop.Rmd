@@ -5,6 +5,18 @@ date:   2015-10-15 10:00:00
 output: html_document
 permalink: /R/spatio-temporal/
 ---
+
+<section id="table-of-contents" class="toc">
+  <header>
+    <h3 >Contents</h3>
+  </header>
+<div id="drawer" markdown="1">
+*  Auto generated table of contents
+{:toc}
+</div>
+</section><!-- /#table-of-contents -->
+
+
 #Overview
 
 ##Persona
@@ -29,11 +41,11 @@ tree height
 * A time series animation of NDVI for both sites that she can post on her blog.
  
  
-#Part One - The Geospatial Landscape
+#P1. The Geospatial Landscape
 
 **stuff here**
 
-#Part Two Work With Raster and Vector Data In R 
+#P2. Work With Raster and Vector Data In R 
 
 Goal: Participants will know how to  import raster and vector data in R, view metadata / attributes of each in R.
 
@@ -66,7 +78,7 @@ setwd("~/Documents/data/1_DataPortal_Workshop")
 ```
 
 
-#First plot the basemap to see where the tower boundary is. 
+###First plot the basemap to see where the tower boundary is. 
 
 Note, this will require opening up the geotiff imagery for the site.
 Then plotting 
@@ -85,6 +97,11 @@ plot(chm, main="NEON Canopy Height Model (Tree Height)\nHarvard Forest")
 
 ```
 
+###opening a multi-band image is different from opening a single band image
+We need to use the stack command for this...
+
+more here..
+
 ```{r import-rgb-image }
 ################### IMPORT MULTI BAND RASTER (image) #########################
 #note that when you import a multi band image you have to import it as a stack 
@@ -97,10 +114,21 @@ baseImage <- stack("NEON_RemoteSensing/HARV/HARV_RGB_Ortho.tif")
 #is there a way to plot RGB and add titles, etc (data viz group??)
 plotRGB(baseImage,r=1,g=2,b=3, 
         main="Harvard Tower Site")
+```
 
+###vector data are different from raster
+
+More here on vectors...
+
+Open a point, line and polygon layer here.
+NOTE: need to add line and point!
+
+ogr is better than maptools (IMO) :) ... why 
+
+```{r work-with-vectors }
 #Import the shapefile 
 #note: read ogr is preferred as it maintains prj info
-squarePlot <- readOGR("NDVI/","HarClip_UTMZ18")
+squarePlot <- readOGR("boundaryFiles/HARV/","HarClip_UTMZ18")
 
 #view attributes
 squarePlot
@@ -110,14 +138,32 @@ crs(squarePlot)
 #view extent
 extent(squarePlot)
 
+#look at the polygon
+plot(squarePlot, col="purple")
+
+#look at the polygon on top of the imagery
+plotRGB(baseImage)
+
 #add the plot boundary to the image. Make it a transparent box with a thick outline
 #Note: leah needs to fix the crop box to make it UTM z18 friendly! it will happen.
 plot(squarePlot, col="yellow", add=TRUE)
 
+#open a line shapefile
+#NOte: this file has attributes so the viz group should work on 
+#making maps with multi attribute shapefiles
+#adding legends, etc
+roads <- readOGR("boundaryFiles/HARV/","HARV_roadStream")
+plot(roads, col="yellow", add=TRUE)
+
+#add a point
+tower <- readOGR("boundaryFiles/HARV/","HARVtower_UTM18N")
+#make this a cooler symbol
+plot(tower, col="red", add=TRUE)
+
 ```
 
 
-#Crop the Base Image to the AOI
+###Crop the Base Image to the AOI
 
 This is the area used to clip the NDVI data from. We can expand it a bit.
 Concerned with size but i think a bit larger could be ok.
@@ -137,28 +183,8 @@ writeRaster(new,"new","GTiff", overwrite=TRUE)
 
 ```
 
-#Project Organization & Metadata
 
-**Goal:** Participants will understand how to organize a project with geospatial data and what metadata are most important to look at.
-
-##Learning Objectives:
-
-* Know how to look up and grab key attributes of a shapefile in R (extent, CRS)
-* Know how to look up and grab key attributes of a raster in R (extent, CRS)
-* Understand CRS (coordinate reference systems)
-* Know how to reproject files when they don’t line up
-* Understand the files associated with a shapefile.
-
-
-```{r project-organization }
-#might have stuff about storing data
-
-
-```
-
-#Working with Raster Time Series Data
-
-NOTE: this could be part of P2 above!
+#P2b. Working with Raster Time Series Data
 
 Goal: Participants will know how to work with, extract values from  and plot a set of rasters in R.
 
@@ -180,7 +206,7 @@ Import the NDVI time series.
 #the other time series for the california sites is in NDVI/D17
 #Note: if it's best we can also remove the nesting of folders here. I left it
 #just to remember where i got the data from originally! i can just include a note to myself.
-tifPath <- "NDVI/HARV/2011/"
+tifPath <- "Landsat_NDVI/HARV/2011/"
 
 #open up the cropped files
 #create list of files to make raster stack
@@ -193,6 +219,10 @@ rastStack <- stack(allCropped)
 #would like to figure out how to plot these with 2-3 in each row rather than 4
 plot(rastStack, zlim=c(1500,10000),nc=3)
 
+#VIZ people can show us how to customize the title on the plots
+#Viz people can show us how to adjust the LAYOUT so the figures
+#are easier to read...
+
 #adjust the layout
 #par(mfrow=c(7,2))
 #not sure how to plot fewer columns without throwing errors
@@ -201,8 +231,8 @@ plot(rastStack, zlim=c(1500,10000),nc=3)
 hist(rastStack,xlim=c(1500,10000))
 
 #create data frame, calculate NDVI
-ndvi.df <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
-colnames(ndvi.df) <- c("julianDays", "meanNDVI")
+ndvi.df.HARV <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
+colnames(ndvi.df.HARV) <- c("julianDays", "meanNDVI")
 i <- 0
 for (crop in allCropped){
   i=i+1
@@ -210,36 +240,38 @@ for (crop in allCropped){
   imageCrop <- raster(crop)
   
   #calculate the mean of each
-  ndvi.df$meanNDVI[i] <- cellStats(imageCrop,mean) 
+  ndvi.df.HARV$meanNDVI[i] <- cellStats(imageCrop,mean) 
   
   #grab julian days
-  ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
+  ndvi.df.HARV$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
 }
 
-ndvi.df$yr <- as.integer(2009)
-ndvi.df$site <- "HARV"
+ndvi.df.HARV$yr <- as.integer(2009)
+ndvi.df.HARV$site <- "HARV"
 
 ```
 
-#PLOT NDVI for 2011
+###PLOT NDVI for 2011
 
 NOTE: will add tiles for 2009-2010 - have 30 years but that is a lot!
-#should we expand the extent or not?
+###should we expand the extent or not?
 LOOK UP:
-#how to connect the dots in the NDVI ggplot??
+###how to connect the dots in the NDVI ggplot??
 
 Now, let's plot NDVI for one year
 
 NOTE: there are some bad points in the data. this is because of extreme cloud cover in the imagery. I will try to make a few images we can look at to see that these scenes are bad. It might be good for
 the remote sensing group to cover this.
 
+###NOTE - there is a DC lesson on GGPLOT that we might be able to 
+###adapt to this!
 
 ```{r plot-mean-NDVI }
 ##plot stuff
 #need to figure out the best plotting method to connect the dots! Or a better input format object
 #we also should remove bad points in this layer and explain why the points are bad 
 #cloud cover)
-ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
+ggplot(ndvi.df.HARV, aes(julianDays, meanNDVI)) +
   geom_point(size=4,colour = "blue") + 
   ggtitle("NDVI for HARVARD forest 2011\nLandsat Derived") +
   xlab("Julian Days") + ylab("Mean NDVI") +
@@ -248,18 +280,17 @@ ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
 ```
 
 
-
-#Below is the same analysis for another site for the same time period!
+###Below is the same analysis for another site for the same time period!
 THe data are for california field site san Joachin experimental range.
 This might be an option additional activity to compare the two! Note
 that hte NDVI values are generally lower as it's a scrubby medit environment.
-We can include pictures!
+We can include photographs of the sites as well!
 The data are very interesting!
 
 ```{r process-NDVI-images-SJER }
 
 #define the path to write tiffs
-tifPath <- "NDVI/SJER/2011/"
+tifPath <- "Landsat_NDVI/SJER/2011/"
 
 #open up the cropped files
 #create list of files to make raster stack
@@ -280,8 +311,8 @@ plot(rastStack, zlim=c(1500,10000),nc=3)
 hist(rastStack,xlim=c(1500,10000))
 
 #create data frame, calculate NDVI
-ndvi.df <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
-colnames(ndvi.df) <- c("julianDays", "meanNDVI")
+ndvi.df.SJER <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
+colnames(ndvi.df.SJER) <- c("julianDays", "meanNDVI")
 i <- 0
 for (crop in allCropped){
   i=i+1
@@ -289,17 +320,17 @@ for (crop in allCropped){
   imageCrop <- raster(crop)
   
   #calculate the mean of each
-  ndvi.df$meanNDVI[i] <- cellStats(imageCrop,mean) 
+  ndvi.df.SJER$meanNDVI[i] <- cellStats(imageCrop,mean) 
   
   #grab julian days
-  ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
+  ndvi.df.SJER$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
 }
 
-ndvi.df$yr <- as.integer(2011)
-ndvi.df$site <- "SJER"
+ndvi.df.SJER$yr <- as.integer(2011)
+ndvi.df.SJER$site <- "SJER"
 
 #plot NDVI
-ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
+ggplot(ndvi.df.SJER, aes(julianDays, meanNDVI)) +
   geom_point(size=4,colour = "blue") + 
   ggtitle("NDVI for SJER 2011\nLandsat Derived") +
   xlab("Julian Days") + ylab("Mean NDVI") +
@@ -307,7 +338,7 @@ ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
 
 ```
 
-#Animated Gifs of Time Series in R!
+##Animated Gifs of Time Series in R!
 
 Below is simple code to create an animation from a rasterstack.
 
@@ -340,11 +371,50 @@ Time series for NDVI for 2011 at Harvard Forest
 #note it is easy to get more years as well! 
 
 ```{r}
+  
+#Compare the two sites
+ndvi.df <- rbind(ndvi.df.SJER,ndvi.df.HARV)  
+  
+#plot NDVI
+#make it look prettier
+ggplot(ndvi.df, aes(julianDays, meanNDVI, colour=site)) +
+  geom_point(size=4,aes(group=site)) + geom_line(aes(group=site))+
+  ggtitle("NDVI HARV vs. SJER 2011\nLandsat Derived") +
+  xlab("Julian Days") + ylab("Mean NDVI") +
+  theme(text = element_text(size=20))
+
+
 #the end of this section  
   
 ```
 
-#Working with CSV format Time Series Data
+
+#P3. Project Organization & Metadata
+
+**Goal:** Participants will understand how to organize a project with geospatial data and what metadata are most important to look at.
+
+##Learning Objectives:
+
+* Know how to look up and grab key attributes of a shapefile in R (extent, CRS)
+* Know how to look up and grab key attributes of a raster in R (extent, CRS)
+* Understand CRS (coordinate reference systems)
+* Know how to reproject files when they don’t line up
+* Understand the files associated with a shapefile.
+
+
+```{r project-organization }
+#might have stuff about storing data
+#stuff on the files associated with a shapefile
+
+#in this case, our data are organized by
+#metric or type of data and then location then year. 
+#thinking about organizing data is important.
+
+#crs and metadata in the geospatial world is also important...
+
+```
+
+#P4. Working with CSV format Time Series Data
 
 **Goal:** Participants will know how to open, clean and plot quantitative time series data within  a text file.
 
@@ -371,7 +441,7 @@ options(stringsAsFactors = FALSE)
 
 ```
 
-#Dealing with Date AND time
+##Dealing with Date AND time
 SUGGESTION - we should subset this out for just a few years to begin with. I'd recommend 2009-2011
 Otherwise it is too big to work with.
 
@@ -419,12 +489,13 @@ myPlot + scale_x_datetime(labels = date_format("%m/%d/%y"))
 
 ```
 
-#convert the data to daily average
+###convert the data to daily average
 
 ```{r convert-daily }
 #convert to daily  julian days
 temp.daily <- aggregate(yr.09.11["airt"], format(yr.09.11["datetime"],"%Y-%j"),
                  mean, na.rm = TRUE) 
+
 
 #not working yet - weird!
 #qplot(temp.daily$datetime,temp.daily$airt)
@@ -441,7 +512,7 @@ temp.daily <- aggregate(yr.09.11["airt"], format(yr.09.11["datetime"],"%Y-%j"),
 ```
 
 
-#Dealing with just date.
+##Dealing with just date.
 
 the POSIX format is good to go over...One option could be to do the averaging to 
 daily on the data above. But you might need to smooth it so it could get complicated?
@@ -503,7 +574,7 @@ myPlot + scale_x_date(labels = date_format("%m/%d/%y"))
 
 ```
 
-#plot soil temperature
+###plot soil temperature
 
 ```{r soil-temp }
 
@@ -529,9 +600,7 @@ myPlot + scale_x_date(labels = date_format("%m/%d/%y"))
 ```
 
 
-
-
-#Look at Day Length Data for Harvard
+##Look at Day Length Data for Harvard
 
 NOTE - i need to get the data from 2009-2011 to align with the Landsat Time Series
 
@@ -569,7 +638,7 @@ ggplot(dayLengthHar2011, aes(Day, Jan)) +
 
 ```
 
-#Convert to Julian Days and Plot
+###Convert to Julian Days and Plot
 
 Next, plot full year's worth of daylength for 2011.
 Note: this could be turned into a function to do multiple files.
@@ -597,8 +666,7 @@ ggplot(dayLengthHar2011.st, aes(JulianDay,Hours)) +
 ```
 
 
-
-#P6 - Data Viz  
+#P5. Data Viz  
 
 Goal: Participants will know how create and customize maps of spatial data. Participants will know how to create multi-variable plots of spatial data.
 
@@ -622,10 +690,47 @@ online (leaflet, plot.ly)
 ```{r data-viz }
 
 
+#Here are things to work on
+
+# Creating a Map in r with a legend and multiple elements
+# import the RGB base image, the shapefile, color the shapefile by atttibute
+# add teh point, customize symbology, colors, labels, title, etc, add a north arrow
+# SO imagine a GIS work flow but do that in R.
+
+# Create a leaflet map showing something?? (optional but could be cool. would require
+#converting to geojson potentially)
+
+#customizing Ggplots and adding multiple variables that are different 
+#IE the dataframes can't be stacked.
+
 
 ```
 
 
-P7 - An automated workflow 
+
+
+#P7. An automated workflow 
+
+What if we wanted to turn the workflow above into a series of loops and functions that handled the data for multiple sites. What if we added an additional year's worth of dat
+to each site?
+
 processing the above for multiple sites -- automating spatial analysis workflow in R
+
+```{r}
+#end of section
+```
+
+
+#Remote Sensing Workshop 
+
+This group will build on items on the portal
+They will consider the arc of skillsets needed to work with HSI imagery and lidar
+starting from beginner to advanced. the materials below might fall somewhere in the middle
+with some beginner stuff?
+
+http://neondataskills.org/HDF5/
+
+http://neondataskills.org/lidar/
+
+
 

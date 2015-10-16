@@ -37,9 +37,10 @@ baseImage <- stack("NEON_RemoteSensing/HARV/HARV_RGB_Ortho.tif")
 plotRGB(baseImage,r=1,g=2,b=3, 
         main="Harvard Tower Site")
 
+## ----work-with-vectors---------------------------------------------------
 #Import the shapefile 
 #note: read ogr is preferred as it maintains prj info
-squarePlot <- readOGR("NDVI/","HarClip_UTMZ18")
+squarePlot <- readOGR("boundaryFiles/HARV/","HarClip_UTMZ18")
 
 #view attributes
 squarePlot
@@ -49,9 +50,27 @@ crs(squarePlot)
 #view extent
 extent(squarePlot)
 
+#look at the polygon
+plot(squarePlot, col="purple")
+
+#look at the polygon on top of the imagery
+plotRGB(baseImage)
+
 #add the plot boundary to the image. Make it a transparent box with a thick outline
 #Note: leah needs to fix the crop box to make it UTM z18 friendly! it will happen.
 plot(squarePlot, col="yellow", add=TRUE)
+
+#open a line shapefile
+#NOte: this file has attributes so the viz group should work on 
+#making maps with multi attribute shapefiles
+#adding legends, etc
+roads <- readOGR("boundaryFiles/HARV/","HARV_roadStream")
+plot(roads, col="yellow", add=TRUE)
+
+#add a point
+tower <- readOGR("boundaryFiles/HARV/","HARVtower_UTM18N")
+#make this a cooler symbol
+plot(tower, col="red", add=TRUE)
 
 
 ## ----crop-image----------------------------------------------------------
@@ -68,18 +87,13 @@ plotRGB(new, axes=F,main="RGB image cropped")
 writeRaster(new,"new","GTiff", overwrite=TRUE)
 
 
-## ----project-organization------------------------------------------------
-#might have stuff about storing data
-
-
-
 ## ----process-NDVI-images-HARV--------------------------------------------
 
 #define the path to write tiffs
 #the other time series for the california sites is in NDVI/D17
 #Note: if it's best we can also remove the nesting of folders here. I left it
 #just to remember where i got the data from originally! i can just include a note to myself.
-tifPath <- "NDVI/HARV/2011/"
+tifPath <- "Landsat_NDVI/HARV/2011/"
 
 #open up the cropped files
 #create list of files to make raster stack
@@ -92,6 +106,10 @@ rastStack <- stack(allCropped)
 #would like to figure out how to plot these with 2-3 in each row rather than 4
 plot(rastStack, zlim=c(1500,10000),nc=3)
 
+#VIZ people can show us how to customize the title on the plots
+#Viz people can show us how to adjust the LAYOUT so the figures
+#are easier to read...
+
 #adjust the layout
 #par(mfrow=c(7,2))
 #not sure how to plot fewer columns without throwing errors
@@ -100,8 +118,8 @@ plot(rastStack, zlim=c(1500,10000),nc=3)
 hist(rastStack,xlim=c(1500,10000))
 
 #create data frame, calculate NDVI
-ndvi.df <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
-colnames(ndvi.df) <- c("julianDays", "meanNDVI")
+ndvi.df.HARV <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
+colnames(ndvi.df.HARV) <- c("julianDays", "meanNDVI")
 i <- 0
 for (crop in allCropped){
   i=i+1
@@ -109,14 +127,14 @@ for (crop in allCropped){
   imageCrop <- raster(crop)
   
   #calculate the mean of each
-  ndvi.df$meanNDVI[i] <- cellStats(imageCrop,mean) 
+  ndvi.df.HARV$meanNDVI[i] <- cellStats(imageCrop,mean) 
   
   #grab julian days
-  ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
+  ndvi.df.HARV$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
 }
 
-ndvi.df$yr <- as.integer(2009)
-ndvi.df$site <- "HARV"
+ndvi.df.HARV$yr <- as.integer(2009)
+ndvi.df.HARV$site <- "HARV"
 
 
 ## ----plot-mean-NDVI------------------------------------------------------
@@ -124,7 +142,7 @@ ndvi.df$site <- "HARV"
 #need to figure out the best plotting method to connect the dots! Or a better input format object
 #we also should remove bad points in this layer and explain why the points are bad 
 #cloud cover)
-ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
+ggplot(ndvi.df.HARV, aes(julianDays, meanNDVI)) +
   geom_point(size=4,colour = "blue") + 
   ggtitle("NDVI for HARVARD forest 2011\nLandsat Derived") +
   xlab("Julian Days") + ylab("Mean NDVI") +
@@ -134,7 +152,7 @@ ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
 ## ----process-NDVI-images-SJER--------------------------------------------
 
 #define the path to write tiffs
-tifPath <- "NDVI/SJER/2011/"
+tifPath <- "Landsat_NDVI/SJER/2011/"
 
 #open up the cropped files
 #create list of files to make raster stack
@@ -155,8 +173,8 @@ plot(rastStack, zlim=c(1500,10000),nc=3)
 hist(rastStack,xlim=c(1500,10000))
 
 #create data frame, calculate NDVI
-ndvi.df <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
-colnames(ndvi.df) <- c("julianDays", "meanNDVI")
+ndvi.df.SJER <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
+colnames(ndvi.df.SJER) <- c("julianDays", "meanNDVI")
 i <- 0
 for (crop in allCropped){
   i=i+1
@@ -164,17 +182,17 @@ for (crop in allCropped){
   imageCrop <- raster(crop)
   
   #calculate the mean of each
-  ndvi.df$meanNDVI[i] <- cellStats(imageCrop,mean) 
+  ndvi.df.SJER$meanNDVI[i] <- cellStats(imageCrop,mean) 
   
   #grab julian days
-  ndvi.df$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
+  ndvi.df.SJER$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
 }
 
-ndvi.df$yr <- as.integer(2011)
-ndvi.df$site <- "SJER"
+ndvi.df.SJER$yr <- as.integer(2011)
+ndvi.df.SJER$site <- "SJER"
 
 #plot NDVI
-ggplot(ndvi.df, aes(julianDays, meanNDVI)) +
+ggplot(ndvi.df.SJER, aes(julianDays, meanNDVI)) +
   geom_point(size=4,colour = "blue") + 
   ggtitle("NDVI for SJER 2011\nLandsat Derived") +
   xlab("Julian Days") + ylab("Mean NDVI") +
@@ -202,8 +220,32 @@ library(animation)
 
 
 ## ------------------------------------------------------------------------
+  
+#Compare the two sites
+ndvi.df <- rbind(ndvi.df.SJER,ndvi.df.HARV)  
+  
+#plot NDVI
+#make it look prettier
+ggplot(ndvi.df, aes(julianDays, meanNDVI, colour=site)) +
+  geom_point(size=4,aes(group=site)) + geom_line(aes(group=site))+
+  ggtitle("NDVI HARV vs. SJER 2011\nLandsat Derived") +
+  xlab("Julian Days") + ylab("Mean NDVI") +
+  theme(text = element_text(size=20))
+
+
 #the end of this section  
   
+
+## ----project-organization------------------------------------------------
+#might have stuff about storing data
+#stuff on the files associated with a shapefile
+
+#in this case, our data are organized by
+#metric or type of data and then location then year. 
+#thinking about organizing data is important.
+
+#crs and metadata in the geospatial world is also important...
+
 
 ## ----load-libraries-date-function----------------------------------------
 
@@ -262,6 +304,7 @@ myPlot + scale_x_datetime(labels = date_format("%m/%d/%y"))
 #convert to daily  julian days
 temp.daily <- aggregate(yr.09.11["airt"], format(yr.09.11["datetime"],"%Y-%j"),
                  mean, na.rm = TRUE) 
+
 
 #not working yet - weird!
 #qplot(temp.daily$datetime,temp.daily$airt)
@@ -405,5 +448,21 @@ ggplot(dayLengthHar2011.st, aes(JulianDay,Hours)) +
 ## ----data-viz------------------------------------------------------------
 
 
+#Here are things to work on
 
+# Creating a Map in r with a legend and multiple elements
+# import the RGB base image, the shapefile, color the shapefile by atttibute
+# add teh point, customize symbology, colors, labels, title, etc, add a north arrow
+# SO imagine a GIS work flow but do that in R.
+
+# Create a leaflet map showing something?? (optional but could be cool. would require
+#converting to geojson potentially)
+
+#customizing Ggplots and adding multiple variables that are different 
+#IE the dataframes can't be stacked.
+
+
+
+## ------------------------------------------------------------------------
+#end of section
 
