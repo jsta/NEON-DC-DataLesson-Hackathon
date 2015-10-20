@@ -16,7 +16,7 @@ image:
 Welcome to the hackathon landing page!
 
 <a href="https://public.etherpad-mozilla.org/p/spatio-temporal-hackathon" class="btn btn-info" target="_blank"> 
-Visit the Workshop Etherpad</a>
+Visit the Workshop Etherpad Now</a>
 
 ###Agenda
 
