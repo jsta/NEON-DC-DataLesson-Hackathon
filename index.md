@@ -13,21 +13,17 @@ image:
 
 ###October 21-23 2015
 
-
 Welcome to the hackathon landing page!
 
+<a href="https://etherpad.mozilla.org/ESA2015-bigData" class="btn btn-info" target="_blank"> 
+Visit the Workshop Etherpad</a>
 
 ###Agenda
 
-[AGENDA here]({{ site_baseurl }}/agenda/)
+[AGENDA here (google doc)](https://docs.google.com/document/d/1UnqpTCm6H0_alBO0I21jzTMikqLDQ-jSn0_1eJCoPYg/edit#)
 
 ###Link to sample lesson shell
 
 The page below illustrates what the code might look like for the lessons that we are building!
 
 [Sample Lesson Shell]({{ site_baseurl }}R/spatio-temporal/)
-
-
-###Participants
-
-To be added here
