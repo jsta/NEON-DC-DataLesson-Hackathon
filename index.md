@@ -15,7 +15,7 @@ image:
 
 Welcome to the hackathon landing page!
 
-<a href="https://etherpad.mozilla.org/ESA2015-bigData" class="btn btn-info" target="_blank"> 
+<a href="https://public.etherpad-mozilla.org/p/spatio-temporal-hackathon" class="btn btn-info" target="_blank"> 
 Visit the Workshop Etherpad</a>
 
 ###Agenda
