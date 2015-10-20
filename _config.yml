@@ -44,7 +44,8 @@ links:
     url: /about/
     
   - title: Agenda
-    url: /agenda/
+    url: https://docs.google.com/document/d/1UnqpTCm6H0_alBO0I21jzTMikqLDQ-jSn0_1eJCoPYg/edit#
+    external: true
     
   - title: NEON Website
     url: http://www.neoninc.org
