@@ -21,19 +21,34 @@ permalink: /R/spatio-temporal/
 
 ##Persona
 
-Jessica, is putting together her dissertation proposal as a part of her PHD program in ecology at University of Boulder, CO.  She is interested in exploring some of her field sites to understand how phenology of vegetation (greening in the spring summer and senescence in the winter, varies across multiple sites and through time. Her PhD advisor has given her some data for a few sites which have very different vegetation communities including Harvard Forest (Massachusetts) and San Joachin Experimental Range (California). The data include:
+Jessica, is putting together her dissertation proposal as a part of her PHD 
+program in ecology at University of Boulder, CO.  She is interested in exploring 
+some of her field sites to understand how phenology of vegetation (greening in 
+the spring summer and senescence in the winter, varies across multiple sites and 
+through time. Her PhD advisor has given her some data for a few sites which have 
+very different vegetation communities including Harvard Forest (Massachusetts) 
+and San Joachin Experimental Range (California). The data include:
 
-1.Vegetation greenness (NDVI) derived from the Landsat Satellite (30 meter resolution) for both sites for 2 years derived from the landsat sensor in a raster format.
+1.Vegetation greenness (NDVI) derived from the Landsat Satellite (30 meter resolution) 
+for both sites for 2 years derived from the landsat sensor in a raster format.
 2. Some high resolution images of the sites.
 3. A canopy height model showing tree height
 4. A DEM (digital elevation model) showing topography.
-5. Site temperature, PAR (Photosynthetic active radiation), Soil temperature, Precipitation and daylength for each day over those two years
+5. Site temperature, PAR (Photosynthetic active radiation), Soil temperature, 
+Precipitation and daylength for each day over those two years
 
-Jessica has done some of the things above using her favorite open source GIS tool - QGIS. However that workflow makes it difficult to process and look at multiple years worth of data. She wants to create an efficient reproducible workflow that she can use as she collects data for more sites and years over time to support her dissertation work. She has never opened shapefiles and rasters in a non-gui environment. She also understands what a raster is but doesn’t know where the ndvi data come from.
+Jessica has done some of the things above using her favorite open source GIS tool 
+- QGIS. However that workflow makes it difficult to process and look at multiple 
+years worth of data. She wants to create an efficient reproducible workflow that 
+she can use as she collects data for more sites and years over time to support her 
+dissertation work. She has never opened shapefiles and rasters in a non-gui 
+environment. She also understands what a raster is but doesn’t know where the ndvi 
+data come from.
 
 Jessica would like to create the following outputs to better understand her project:
 
-* Plots of temperature, precipitation, PAR and daylength over the 2 year time period (metrics which related to the greening and browning of plants)  compared to NDVI (greenness).
+* Plots of temperature, precipitation, PAR and daylength over the 2 year time period 
+(metrics which related to the greening and browning of plants)  compared to NDVI (greenness).
 * Basemaps of her site showing 
 * The location of the tower that measured the above variables and imagery showing what the site look like.
 tree height
@@ -253,7 +268,7 @@ Import the NDVI time series.
     
     #open up the cropped files
     #create list of files to make raster stack
-    allCropped <-  list.files(tifPath, full.names=TRUE, pattern = ".tif$")
+    allCropped <-  list.files(ndvi.tifPath, full.names=TRUE, pattern = ".tif$")
     
     #create a raster stack from the list
     rastStack <- stack(allCropped)
@@ -287,7 +302,7 @@ original images
     rgb.allCropped <-  list.files("Landsat_NDVI/HARV/2011/RGB/", full.names=TRUE, pattern = ".tif$")
     
     #create a layout
-    par(mfrow=c(4,3))
+    par(mfrow=c(4,4))
     
     #plot all images
     #would be nice to label each one but not sure how with plotRGB
@@ -295,8 +310,11 @@ original images
       ndvi.rastStack <- stack(aFile)
       plotRGB(ndvi.rastStack, stretch="lin")
     }
+    
+    #reset layout
+    par(mfrow=c(1,1))
 
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/unnamed-chunk-1-1.png) 
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/plot-rgb-images-1.png) 
 
 ### Next calculate NDVI
 
@@ -319,15 +337,15 @@ More here...
       ndvi.df.HARV$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
     }
     
+    #add and populate a year column to the data frame
     ndvi.df.HARV$yr <- as.integer(2009)
+    #add and populate a site column to the data frame
     ndvi.df.HARV$site <- "HARV"
 
 ###PLOT NDVI for 2011
 
 NOTE: will add tiles for 2009-2010 - have 30 years but that is a lot!
 ###should we expand the extent or not?
-LOOK UP:
-###how to connect the dots in the NDVI ggplot??
 
 Now, let's plot NDVI for one year
 
@@ -360,7 +378,7 @@ The data are very interesting!
 
 
     #define the path to write tiffs
-    tifPath <- "Landsat_NDVI/SJER/2011/"
+    tifPath <- "Landsat_NDVI/SJER/2011/ndvi/"
     
     #open up the cropped files
     #create list of files to make raster stack
@@ -368,9 +386,7 @@ The data are very interesting!
     
     #create a raster stack from the list
     rastStack <- stack(allCropped)
-
-    ## Error in x[[1]]: subscript out of bounds
-
+    
     #layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
     #would like to figure out how to plot these with 2-3 in each row rather than 4
     plot(rastStack, zlim=c(1500,10000),nc=3)
@@ -383,7 +399,11 @@ The data are very interesting!
     
     #plot histograms for each image
     hist(rastStack,xlim=c(1500,10000))
-    
+
+    ## Warning in .local(x, ...): only the first 16 layers are plotted
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-2.png) 
+
     #create data frame, calculate NDVI
     ndvi.df.SJER <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
     colnames(ndvi.df.SJER) <- c("julianDays", "meanNDVI")
@@ -401,13 +421,8 @@ The data are very interesting!
     }
     
     ndvi.df.SJER$yr <- as.integer(2011)
-
-    ## Error in `$<-.data.frame`(`*tmp*`, "yr", value = 2011L): replacement has 1 row, data has 0
-
     ndvi.df.SJER$site <- "SJER"
-
-    ## Error in `$<-.data.frame`(`*tmp*`, "site", value = "SJER"): replacement has 1 row, data has 0
-
+    
     #plot NDVI
     ggplot(ndvi.df.SJER, aes(julianDays, meanNDVI)) +
       geom_point(size=4,colour = "blue") + 
@@ -415,7 +430,7 @@ The data are very interesting!
       xlab("Julian Days") + ylab("Mean NDVI") +
       theme(text = element_text(size=20))
 
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-2.png) 
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-3.png) 
 
 ##Animated Gifs of Time Series in R!
 
@@ -438,9 +453,18 @@ Below is simple code to create an animation from a rasterstack.
         ani.width = 300, ani.height = 300, 
         interval=.5)
 
-    ## Error in plot(rastStack[[i]], main = names(rastStack[[i]]), legend.lab = "NDVI", : error in evaluating the argument 'x' in selecting a method for function 'plot': Error in .local(x, ...) : not a valid subset
+    ## Executing: 
+    ## 'convert' -loop 0 -delay 50 Rplot1.png Rplot2.png Rplot3.png
+    ##     Rplot4.png Rplot5.png Rplot6.png Rplot7.png Rplot8.png
+    ##     Rplot9.png Rplot10.png Rplot11.png Rplot12.png Rplot13.png
+    ##     Rplot14.png Rplot15.png Rplot16.png Rplot17.png 'ndvi.gif'
+    ## Output at: ndvi.gif
+
+    ## [1] TRUE
 
     #}
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/create-animation-1.png) 
 
 ##The animated gif!
 
@@ -461,7 +485,7 @@ Time series for NDVI for 2011 at Harvard Forest
       xlab("Julian Days") + ylab("Mean NDVI") +
       theme(text = element_text(size=20))
 
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/unnamed-chunk-2-1.png) 
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/compare-NDVI-1.png) 
 
     #the end of this section  
 
@@ -677,47 +701,24 @@ NOTE - i need to get the data from 2009-2011 to align with the Landsat Time Seri
     library(lubridate)
     #readr is ideal to open fixed width files (faster than utils)
     library(readr)
-
-    ## 
-    ## Attaching package: 'readr'
-    ## 
-    ## The following objects are masked from 'package:scales':
-    ## 
-    ##     col_factor, col_numeric
-
+    
     #read in fixed width file  
     dayLengthHar2011 <- read.fwf(
-      file="precip_Daylength/Petersham_Mass_2011.txt",
+      file="daylength/HARV/Petersham_Mass_2011.txt",
       widths=c(8,9,9,9,9,9,9,9,9,9,9,9,9))
-
-    ## Warning in file(file, "rt"): cannot open file 'precip_Daylength/
-    ## Petersham_Mass_2011.txt': No such file or directory
-
-    ## Error in file(file, "rt"): cannot open the connection
-
+     
     names(dayLengthHar2011) <- c("Day","Jan","Feb","Mar","Apr",
                                  "May","June","July","Aug","Sept",
                                  "Oct","Nov","Dec") 
-
-    ## Error in names(dayLengthHar2011) <- c("Day", "Jan", "Feb", "Mar", "Apr", : object 'dayLengthHar2011' not found
-
     #open file  
     #dayLengthHar2015 <- read.csv(file = "precip_Daylength/Petersham_Mass_2009.txt", stringsAsFactors = FALSE)
     
     #just pull out the columns with time information
     tempDF <- dayLengthHar2011[,2:13]
-
-    ## Error in eval(expr, envir, enclos): object 'dayLengthHar2011' not found
-
     tempDF[] <- lapply(tempDF, function(x){hm(x)$hour + hm(x)$minute/60})
-
-    ## Error in lapply(tempDF, function(x) {: object 'tempDF' not found
-
     #populate original DF with the new time data in decimal hours 
     dayLengthHar2011[,2:13] <- tempDF
-
-    ## Error in eval(expr, envir, enclos): object 'tempDF' not found
-
+    
     #plot One MOnth of  data
     ggplot(dayLengthHar2011, aes(Day, Jan)) +
       geom_point()+
@@ -725,7 +726,7 @@ NOTE - i need to get the data from 2009-2011 to align with the Landsat Time Seri
       xlab("Day of Month") + ylab("Day Length (Hours)") +
       theme(text = element_text(size=20))
 
-    ## Error in ggplot(dayLengthHar2011, aes(Day, Jan)): object 'dayLengthHar2011' not found
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/Clean-Up-Day-Length-1.png) 
 
 ###Convert to Julian Days and Plot
 
@@ -737,24 +738,13 @@ Note: this could be turned into a function to do multiple files.
     
     #stack the data frame
     dayLengthHar2011.st <- stack(dayLengthHar2011[2:13])
-
-    ## Error in stack(dayLengthHar2011[2:13]): error in evaluating the argument 'x' in selecting a method for function 'stack': Error: object 'dayLengthHar2011' not found
-
     #remove NA values
     dayLengthHar2011.st <- dayLengthHar2011.st[complete.cases(dayLengthHar2011.st),]
-
-    ## Error in eval(expr, envir, enclos): object 'dayLengthHar2011.st' not found
-
     #add julian days (count)
     dayLengthHar2011.st$JulianDay<-seq.int(nrow(dayLengthHar2011.st))
-
-    ## Error in nrow(dayLengthHar2011.st): error in evaluating the argument 'x' in selecting a method for function 'nrow': Error: object 'dayLengthHar2011.st' not found
-
     #fix names
     names(dayLengthHar2011.st) <- c("Hours","Month","JulianDay")
-
-    ## Error in names(dayLengthHar2011.st) <- c("Hours", "Month", "JulianDay"): object 'dayLengthHar2011.st' not found
-
+    
     #plot Years Worth of  data
     ggplot(dayLengthHar2011.st, aes(JulianDay,Hours)) +
       geom_point()+
@@ -762,7 +752,7 @@ Note: this could be turned into a function to do multiple files.
       xlab("Julian Days") + ylab("Day Length (Hours)") +
       theme(text = element_text(size=20))
 
-    ## Error in ggplot(dayLengthHar2011.st, aes(JulianDay, Hours)): object 'dayLengthHar2011.st' not found
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/plot-daylength-1.png) 
 
 
 #P5. Data Viz  

@@ -21,19 +21,34 @@ permalink: /R/spatio-temporal/
 
 ##Persona
 
-Jessica, is putting together her dissertation proposal as a part of her PHD program in ecology at University of Boulder, CO.  She is interested in exploring some of her field sites to understand how phenology of vegetation (greening in the spring summer and senescence in the winter, varies across multiple sites and through time. Her PhD advisor has given her some data for a few sites which have very different vegetation communities including Harvard Forest (Massachusetts) and San Joachin Experimental Range (California). The data include:
+Jessica, is putting together her dissertation proposal as a part of her PHD 
+program in ecology at University of Boulder, CO.  She is interested in exploring 
+some of her field sites to understand how phenology of vegetation (greening in 
+the spring summer and senescence in the winter, varies across multiple sites and 
+through time. Her PhD advisor has given her some data for a few sites which have 
+very different vegetation communities including Harvard Forest (Massachusetts) 
+and San Joachin Experimental Range (California). The data include:
 
-1.Vegetation greenness (NDVI) derived from the Landsat Satellite (30 meter resolution) for both sites for 2 years derived from the landsat sensor in a raster format.
+1.Vegetation greenness (NDVI) derived from the Landsat Satellite (30 meter resolution) 
+for both sites for 2 years derived from the landsat sensor in a raster format.
 2. Some high resolution images of the sites.
 3. A canopy height model showing tree height
 4. A DEM (digital elevation model) showing topography.
-5. Site temperature, PAR (Photosynthetic active radiation), Soil temperature, Precipitation and daylength for each day over those two years
+5. Site temperature, PAR (Photosynthetic active radiation), Soil temperature, 
+Precipitation and daylength for each day over those two years
 
-Jessica has done some of the things above using her favorite open source GIS tool - QGIS. However that workflow makes it difficult to process and look at multiple years worth of data. She wants to create an efficient reproducible workflow that she can use as she collects data for more sites and years over time to support her dissertation work. She has never opened shapefiles and rasters in a non-gui environment. She also understands what a raster is but doesn’t know where the ndvi data come from.
+Jessica has done some of the things above using her favorite open source GIS tool 
+- QGIS. However that workflow makes it difficult to process and look at multiple 
+years worth of data. She wants to create an efficient reproducible workflow that 
+she can use as she collects data for more sites and years over time to support her 
+dissertation work. She has never opened shapefiles and rasters in a non-gui 
+environment. She also understands what a raster is but doesn’t know where the ndvi 
+data come from.
 
 Jessica would like to create the following outputs to better understand her project:
 
-* Plots of temperature, precipitation, PAR and daylength over the 2 year time period (metrics which related to the greening and browning of plants)  compared to NDVI (greenness).
+* Plots of temperature, precipitation, PAR and daylength over the 2 year time period 
+(metrics which related to the greening and browning of plants)  compared to NDVI (greenness).
 * Basemaps of her site showing 
 * The location of the tower that measured the above variables and imagery showing what the site look like.
 tree height
@@ -122,6 +137,7 @@ baseImage <- stack("NEON_RemoteSensing/HARV/HARV_RGB_Ortho.tif")
 #is there a way to plot RGB and add titles, etc (data viz group??)
 plotRGB(baseImage,r=1,g=2,b=3, 
         main="Harvard Tower Site")
+
 ```
 
 ###vector data are different from raster
@@ -218,7 +234,7 @@ ndvi.tifPath <- "Landsat_NDVI/HARV/2011/ndvi/"
 
 #open up the cropped files
 #create list of files to make raster stack
-allCropped <-  list.files(tifPath, full.names=TRUE, pattern = ".tif$")
+allCropped <-  list.files(ndvi.tifPath, full.names=TRUE, pattern = ".tif$")
 
 #create a raster stack from the list
 rastStack <- stack(allCropped)
@@ -243,7 +259,7 @@ hist(rastStack,xlim=c(1500,10000))
 It looks like something is weird with the data... let's have a closer look at the
 original images
 
-```{r}
+```{r plot-rgb-images }
 
 
 #open up the cropped files
@@ -251,7 +267,7 @@ original images
 rgb.allCropped <-  list.files("Landsat_NDVI/HARV/2011/RGB/", full.names=TRUE, pattern = ".tif$")
 
 #create a layout
-par(mfrow=c(4,3))
+par(mfrow=c(4,4))
 
 #plot all images
 #would be nice to label each one but not sure how with plotRGB
@@ -260,6 +276,8 @@ for (aFile in rgb.allCropped){
   plotRGB(ndvi.rastStack, stretch="lin")
 }
 
+#reset layout
+par(mfrow=c(1,1))
 ```
 
 ### Next calculate NDVI
@@ -283,7 +301,9 @@ for (crop in allCropped){
   ndvi.df.HARV$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
 }
 
+#add and populate a year column to the data frame
 ndvi.df.HARV$yr <- as.integer(2009)
+#add and populate a site column to the data frame
 ndvi.df.HARV$site <- "HARV"
 
 ```
@@ -292,8 +312,6 @@ ndvi.df.HARV$site <- "HARV"
 
 NOTE: will add tiles for 2009-2010 - have 30 years but that is a lot!
 ###should we expand the extent or not?
-LOOK UP:
-###how to connect the dots in the NDVI ggplot??
 
 Now, let's plot NDVI for one year
 
@@ -327,7 +345,7 @@ The data are very interesting!
 ```{r process-NDVI-images-SJER }
 
 #define the path to write tiffs
-tifPath <- "Landsat_NDVI/SJER/2011/"
+tifPath <- "Landsat_NDVI/SJER/2011/ndvi/"
 
 #open up the cropped files
 #create list of files to make raster stack
@@ -407,7 +425,7 @@ library(animation)
 Time series for NDVI for 2011 at Harvard Forest
 #note it is easy to get more years as well! 
 
-```{r}
+```{r compare-NDVI }
   
 #Compare the two sites
 ndvi.df <- rbind(ndvi.df.SJER,ndvi.df.HARV)  
@@ -650,7 +668,7 @@ library(readr)
 
 #read in fixed width file  
 dayLengthHar2011 <- read.fwf(
-  file="precip_Daylength/Petersham_Mass_2011.txt",
+  file="daylength/HARV/Petersham_Mass_2011.txt",
   widths=c(8,9,9,9,9,9,9,9,9,9,9,9,9))
  
 names(dayLengthHar2011) <- c("Day","Jan","Feb","Mar","Apr",

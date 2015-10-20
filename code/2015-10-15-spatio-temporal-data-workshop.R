@@ -37,6 +37,7 @@ baseImage <- stack("NEON_RemoteSensing/HARV/HARV_RGB_Ortho.tif")
 plotRGB(baseImage,r=1,g=2,b=3, 
         main="Harvard Tower Site")
 
+
 ## ----work-with-vectors---------------------------------------------------
 #Import the shapefile 
 #note: read ogr is preferred as it maintains prj info
@@ -97,7 +98,7 @@ ndvi.tifPath <- "Landsat_NDVI/HARV/2011/ndvi/"
 
 #open up the cropped files
 #create list of files to make raster stack
-allCropped <-  list.files(tifPath, full.names=TRUE, pattern = ".tif$")
+allCropped <-  list.files(ndvi.tifPath, full.names=TRUE, pattern = ".tif$")
 
 #create a raster stack from the list
 rastStack <- stack(allCropped)
@@ -117,7 +118,7 @@ plot(rastStack, zlim=c(1500,10000),nc=3)
 #plot histograms for each image
 hist(rastStack,xlim=c(1500,10000))
 
-## ------------------------------------------------------------------------
+## ----plot-rgb-images-----------------------------------------------------
 
 
 #open up the cropped files
@@ -125,7 +126,7 @@ hist(rastStack,xlim=c(1500,10000))
 rgb.allCropped <-  list.files("Landsat_NDVI/HARV/2011/RGB/", full.names=TRUE, pattern = ".tif$")
 
 #create a layout
-par(mfrow=c(4,3))
+par(mfrow=c(4,4))
 
 #plot all images
 #would be nice to label each one but not sure how with plotRGB
@@ -134,6 +135,8 @@ for (aFile in rgb.allCropped){
   plotRGB(ndvi.rastStack, stretch="lin")
 }
 
+#reset layout
+par(mfrow=c(1,1))
 
 ## ----calc-NDVI-----------------------------------------------------------
 #create data frame, calculate NDVI
@@ -152,7 +155,9 @@ for (crop in allCropped){
   ndvi.df.HARV$julianDays[i] <- substr(crop,nchar(crop)-21,nchar(crop)-19)
 }
 
+#add and populate a year column to the data frame
 ndvi.df.HARV$yr <- as.integer(2009)
+#add and populate a site column to the data frame
 ndvi.df.HARV$site <- "HARV"
 
 
@@ -171,7 +176,7 @@ ggplot(ndvi.df.HARV, aes(julianDays, meanNDVI)) +
 ## ----process-NDVI-images-SJER--------------------------------------------
 
 #define the path to write tiffs
-tifPath <- "Landsat_NDVI/SJER/2011/"
+tifPath <- "Landsat_NDVI/SJER/2011/ndvi/"
 
 #open up the cropped files
 #create list of files to make raster stack
@@ -238,7 +243,7 @@ library(animation)
 #}
 
 
-## ------------------------------------------------------------------------
+## ----compare-NDVI--------------------------------------------------------
   
 #Compare the two sites
 ndvi.df <- rbind(ndvi.df.SJER,ndvi.df.HARV)  
@@ -419,7 +424,7 @@ library(readr)
 
 #read in fixed width file  
 dayLengthHar2011 <- read.fwf(
-  file="precip_Daylength/Petersham_Mass_2011.txt",
+  file="daylength/HARV/Petersham_Mass_2011.txt",
   widths=c(8,9,9,9,9,9,9,9,9,9,9,9,9))
  
 names(dayLengthHar2011) <- c("Day","Jan","Feb","Mar","Apr",
