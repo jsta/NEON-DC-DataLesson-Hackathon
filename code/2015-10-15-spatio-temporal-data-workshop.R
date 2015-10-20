@@ -10,7 +10,7 @@ library(ggplot2)
 options(stringsAsFactors = FALSE)
 
 #set the working directory
-setwd("~/Documents/data/1_DataPortal_Workshop")
+setwd("~/Documents/data/1_DataPortal_Workshop/1_WorkshopData")
 
 
 ## ----view-basemap--------------------------------------------------------
@@ -93,7 +93,7 @@ writeRaster(new,"new","GTiff", overwrite=TRUE)
 #the other time series for the california sites is in NDVI/D17
 #Note: if it's best we can also remove the nesting of folders here. I left it
 #just to remember where i got the data from originally! i can just include a note to myself.
-tifPath <- "Landsat_NDVI/HARV/2011/"
+ndvi.tifPath <- "Landsat_NDVI/HARV/2011/ndvi/"
 
 #open up the cropped files
 #create list of files to make raster stack
@@ -117,6 +117,25 @@ plot(rastStack, zlim=c(1500,10000),nc=3)
 #plot histograms for each image
 hist(rastStack,xlim=c(1500,10000))
 
+## ------------------------------------------------------------------------
+
+
+#open up the cropped files
+#create list of files to make raster stack
+rgb.allCropped <-  list.files("Landsat_NDVI/HARV/2011/RGB/", full.names=TRUE, pattern = ".tif$")
+
+#create a layout
+par(mfrow=c(4,3))
+
+#plot all images
+#would be nice to label each one but not sure how with plotRGB
+for (aFile in rgb.allCropped){
+  ndvi.rastStack <- stack(aFile)
+  plotRGB(ndvi.rastStack, stretch="lin")
+}
+
+
+## ----calc-NDVI-----------------------------------------------------------
 #create data frame, calculate NDVI
 ndvi.df.HARV <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
 colnames(ndvi.df.HARV) <- c("julianDays", "meanNDVI")

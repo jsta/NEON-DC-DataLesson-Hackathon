@@ -61,6 +61,13 @@ Goal: Participants will know how to  import raster and vector data in R, view me
 Below is some code to look at the data and get this module started.. lots more to
 add!
 
+#Download the Data
+
+<a href="http://figshare.com/articles/NEON_Spatio_Temporal_Teaching_Dataset/1580068" class="btn btn-success">
+ DOWNLOAD NEON Spatio-Temporal Teaching Dataset</a>
+ 
+ About the data -- more to come here.
+
 ```{r load-libraries}
 
 #work with rasters
@@ -73,7 +80,7 @@ library(ggplot2)
 options(stringsAsFactors = FALSE)
 
 #set the working directory
-setwd("~/Documents/data/1_DataPortal_Workshop")
+setwd("~/Documents/data/1_DataPortal_Workshop/1_WorkshopData")
 
 ```
 
@@ -84,6 +91,7 @@ Note, this will require opening up the geotiff imagery for the site.
 Then plotting 
 
 CRS: UTM ZONE 18N FOR HARVARD
+CRS: UTM ZONE 11N for SJER
 
 ```{r view-basemap }
 
@@ -206,7 +214,7 @@ Import the NDVI time series.
 #the other time series for the california sites is in NDVI/D17
 #Note: if it's best we can also remove the nesting of folders here. I left it
 #just to remember where i got the data from originally! i can just include a note to myself.
-tifPath <- "Landsat_NDVI/HARV/2011/"
+ndvi.tifPath <- "Landsat_NDVI/HARV/2011/ndvi/"
 
 #open up the cropped files
 #create list of files to make raster stack
@@ -229,7 +237,36 @@ plot(rastStack, zlim=c(1500,10000),nc=3)
 
 #plot histograms for each image
 hist(rastStack,xlim=c(1500,10000))
+```
 
+###Data Cleaning
+It looks like something is weird with the data... let's have a closer look at the
+original images
+
+```{r}
+
+
+#open up the cropped files
+#create list of files to make raster stack
+rgb.allCropped <-  list.files("Landsat_NDVI/HARV/2011/RGB/", full.names=TRUE, pattern = ".tif$")
+
+#create a layout
+par(mfrow=c(4,3))
+
+#plot all images
+#would be nice to label each one but not sure how with plotRGB
+for (aFile in rgb.allCropped){
+  ndvi.rastStack <- stack(aFile)
+  plotRGB(ndvi.rastStack, stretch="lin")
+}
+
+```
+
+### Next calculate NDVI
+
+More here...
+
+```{r calc-NDVI }
 #create data frame, calculate NDVI
 ndvi.df.HARV <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
 colnames(ndvi.df.HARV) <- c("julianDays", "meanNDVI")

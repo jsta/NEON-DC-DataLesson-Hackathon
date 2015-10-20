@@ -61,6 +61,13 @@ Goal: Participants will know how to  import raster and vector data in R, view me
 Below is some code to look at the data and get this module started.. lots more to
 add!
 
+#Download the Data
+
+<a href="http://figshare.com/articles/NEON_Spatio_Temporal_Teaching_Dataset/1580068" class="btn btn-success">
+ DOWNLOAD NEON Spatio-Temporal Teaching Dataset</a>
+ 
+ About the data -- more to come here.
+
 
     #work with rasters
     library(raster)
@@ -72,7 +79,7 @@ add!
     options(stringsAsFactors = FALSE)
     
     #set the working directory
-    setwd("~/Documents/data/1_DataPortal_Workshop")
+    setwd("~/Documents/data/1_DataPortal_Workshop/1_WorkshopData")
 
 
 ###First plot the basemap to see where the tower boundary is. 
@@ -81,6 +88,7 @@ Note, this will require opening up the geotiff imagery for the site.
 Then plotting 
 
 CRS: UTM ZONE 18N FOR HARVARD
+CRS: UTM ZONE 11N for SJER
 
 
     #import imagery
@@ -241,7 +249,7 @@ Import the NDVI time series.
     #the other time series for the california sites is in NDVI/D17
     #Note: if it's best we can also remove the nesting of folders here. I left it
     #just to remember where i got the data from originally! i can just include a note to myself.
-    tifPath <- "Landsat_NDVI/HARV/2011/"
+    ndvi.tifPath <- "Landsat_NDVI/HARV/2011/ndvi/"
     
     #open up the cropped files
     #create list of files to make raster stack
@@ -266,7 +274,35 @@ Import the NDVI time series.
     
     #plot histograms for each image
     hist(rastStack,xlim=c(1500,10000))
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-HARV-2.png) 
+
+###Data Cleaning
+It looks like something is weird with the data... let's have a closer look at the
+original images
+
+
+    #open up the cropped files
+    #create list of files to make raster stack
+    rgb.allCropped <-  list.files("Landsat_NDVI/HARV/2011/RGB/", full.names=TRUE, pattern = ".tif$")
     
+    #create a layout
+    par(mfrow=c(4,3))
+    
+    #plot all images
+    #would be nice to label each one but not sure how with plotRGB
+    for (aFile in rgb.allCropped){
+      ndvi.rastStack <- stack(aFile)
+      plotRGB(ndvi.rastStack, stretch="lin")
+    }
+
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/unnamed-chunk-1-1.png) 
+
+### Next calculate NDVI
+
+More here...
+
+
     #create data frame, calculate NDVI
     ndvi.df.HARV <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
     colnames(ndvi.df.HARV) <- c("julianDays", "meanNDVI")
@@ -285,8 +321,6 @@ Import the NDVI time series.
     
     ndvi.df.HARV$yr <- as.integer(2009)
     ndvi.df.HARV$site <- "HARV"
-
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-HARV-2.png) 
 
 ###PLOT NDVI for 2011
 
@@ -334,7 +368,9 @@ The data are very interesting!
     
     #create a raster stack from the list
     rastStack <- stack(allCropped)
-    
+
+    ## Error in x[[1]]: subscript out of bounds
+
     #layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
     #would like to figure out how to plot these with 2-3 in each row rather than 4
     plot(rastStack, zlim=c(1500,10000),nc=3)
@@ -347,11 +383,7 @@ The data are very interesting!
     
     #plot histograms for each image
     hist(rastStack,xlim=c(1500,10000))
-
-    ## Warning in .local(x, ...): only the first 16 layers are plotted
-
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-2.png) 
-
+    
     #create data frame, calculate NDVI
     ndvi.df.SJER <- as.data.frame(matrix(-999, ncol = 2, nrow = length(allCropped)))
     colnames(ndvi.df.SJER) <- c("julianDays", "meanNDVI")
@@ -369,8 +401,13 @@ The data are very interesting!
     }
     
     ndvi.df.SJER$yr <- as.integer(2011)
+
+    ## Error in `$<-.data.frame`(`*tmp*`, "yr", value = 2011L): replacement has 1 row, data has 0
+
     ndvi.df.SJER$site <- "SJER"
-    
+
+    ## Error in `$<-.data.frame`(`*tmp*`, "site", value = "SJER"): replacement has 1 row, data has 0
+
     #plot NDVI
     ggplot(ndvi.df.SJER, aes(julianDays, meanNDVI)) +
       geom_point(size=4,colour = "blue") + 
@@ -378,7 +415,7 @@ The data are very interesting!
       xlab("Julian Days") + ylab("Mean NDVI") +
       theme(text = element_text(size=20))
 
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-3.png) 
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/process-NDVI-images-SJER-2.png) 
 
 ##Animated Gifs of Time Series in R!
 
@@ -401,18 +438,9 @@ Below is simple code to create an animation from a rasterstack.
         ani.width = 300, ani.height = 300, 
         interval=.5)
 
-    ## Executing: 
-    ## 'convert' -loop 0 -delay 50 Rplot1.png Rplot2.png Rplot3.png
-    ##     Rplot4.png Rplot5.png Rplot6.png Rplot7.png Rplot8.png
-    ##     Rplot9.png Rplot10.png Rplot11.png Rplot12.png Rplot13.png
-    ##     Rplot14.png Rplot15.png Rplot16.png Rplot17.png 'ndvi.gif'
-    ## Output at: ndvi.gif
-
-    ## [1] TRUE
+    ## Error in plot(rastStack[[i]], main = names(rastStack[[i]]), legend.lab = "NDVI", : error in evaluating the argument 'x' in selecting a method for function 'plot': Error in .local(x, ...) : not a valid subset
 
     #}
-
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/create-animation-1.png) 
 
 ##The animated gif!
 
@@ -433,7 +461,7 @@ Time series for NDVI for 2011 at Harvard Forest
       xlab("Julian Days") + ylab("Mean NDVI") +
       theme(text = element_text(size=20))
 
-![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/unnamed-chunk-1-1.png) 
+![ ]({{ site.baseurl }}/images/rfigs/2015-10-15-spatio-temporal-data-workshop/unnamed-chunk-2-1.png) 
 
     #the end of this section  
 
@@ -649,7 +677,14 @@ NOTE - i need to get the data from 2009-2011 to align with the Landsat Time Seri
     library(lubridate)
     #readr is ideal to open fixed width files (faster than utils)
     library(readr)
-    
+
+    ## 
+    ## Attaching package: 'readr'
+    ## 
+    ## The following objects are masked from 'package:scales':
+    ## 
+    ##     col_factor, col_numeric
+
     #read in fixed width file  
     dayLengthHar2011 <- read.fwf(
       file="precip_Daylength/Petersham_Mass_2011.txt",
