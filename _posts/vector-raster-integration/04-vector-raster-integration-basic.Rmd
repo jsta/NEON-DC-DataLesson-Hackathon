@@ -19,7 +19,7 @@ After completing this activity, you will:
 
 We will use the base graphics `plot()` command to create a vector-raster overlay plot. The following code chunk loads a raster from disk user the `raster` command, plot this raster, and overlays the lines and squareplot shapefiles using the `add` argument. 
 
-```{r }
+```{r Plot vector-raster overlay}
 r <- raster(file.path(prepath, "data", "NEON_RemoteSensing", "HARV", "CHM", "HARV_chmCrop.tif"))
 
 plot(r)

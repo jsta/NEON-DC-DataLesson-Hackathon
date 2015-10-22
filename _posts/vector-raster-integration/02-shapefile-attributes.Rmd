@@ -52,7 +52,7 @@ slot(point, "data")
 
 We already saw how to return all attributes of a spatial object using the `slot()` function. However, we can directly return individual attributes using the dollar sign notation. In the following code chunk we return a list of attribute names using the `slot()` and `names()` functions. Next, we query the _TYPE_ attribute individually. Finally, we subset the `lines` object using dollar sign notation. Note how our subsetting operation reduces the _features_ count from 13 to 2. 
 
-```{r }
+```{r Subsetting shapefiles}
 names(slot(lines, "data"))
 
 lines$TYPE

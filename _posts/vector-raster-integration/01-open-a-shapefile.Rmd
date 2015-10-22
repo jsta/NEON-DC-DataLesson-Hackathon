@@ -72,7 +72,7 @@ plot(point, add  = TRUE, pch = 19, col = "red")
 
 We can use the `col` argument to the `plot()` function to color our lines according to the _TYPE_ attribute. The following code chunk extracts a vector of this attribute, creates a character color vector of the same length, and changes the positions of this color vector that correspond to _footpath_.
 
-```{r }
+```{r Color lines by attribute}
 #color lines by TYPE attribute
 type <- slot(lines, "data")$TYPE
 col <- rep("black", length = length(type))
