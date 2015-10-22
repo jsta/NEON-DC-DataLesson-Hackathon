@@ -93,3 +93,8 @@ below, each pixel represents a particular land cover class that would be found i
 that location in the real world. 
 <a href="{{ site.baseurl }}/GIS-Spatial-Data/Working-With-Rasters/"> More on 
 rasters here</a>. 
+
+```{r chunk-1}
+#code will go here! 
+
+```
