@@ -1,100 +1,61 @@
 ---
-layout: post
-title: "Lesson Title Goes here"
-date:   2015-1-26 20:49:52
-authors: "FirstName LastName, FirstName LastName"
-dateCreated:  2014-11-26 20:49:52
-lastModified: 2015-07-23 14:28:52
-category: time-series-workshop
-tags: [module-1]
-mainTag: GIS-Spatial-Data
-description: "This post explains the fundamental principles, functions and metadata that you need to work with raster data in R."
-code1: 
-image:
-  feature: lidar_GrandMesa.png
-  credit: LiDAR data collected over Grand Mesa, Colorado - National Ecological Observatory Network (NEON)
-  creditlink: http://www.neoninc.org
-permalink: /R/Raster-Data-In-R/
-code1: /R/2015-07-22-Introduction-to-Raster-Data-In-R.R
-comments: true
-
+title: "Shapefile attributes"
+author: "Joseph Stachelek"
+date: "October 22, 2015"
+output: html_document
 ---
 
-<section id="table-of-contents" class="toc">
-  <header>
-    <h3>Contents</h3>
-  </header>
-<div id="drawer" markdown="1">
-*  Auto generated table of contents
-{:toc}
-</div>
-</section><!-- /#table-of-contents -->
-
 ##About
-This activity will walk you through the fundamental principles of working 
-with raster data in R.
+This post explains the nature of shapefile attributes. Participants will be able to locate and query shapefile attributes as well as subset shapefiles by specific attribute values.
 
-**R Skill Level:** Intermediate - you've got the basics of `R` down.
+###Goals / Objectives
+After completing this activity, you will:
 
-<div id="objectives">
+ * Be able to query shapefile attributes
+ * Be able to subset shapefiles based on specific attributes
+ 
+##Querying shapefile attributes
 
-<h3>Goals / Objectives</h3>
-After completing this activity, you will know:
-<ol>
-<li>What a raster dataset is and its fundamental attributes.</li>
-<li>How to import rasters into `R` using the raster library.</li>
-<li>How to perform raster calculations in `R`.</li>
-</ol>
+Recall from the previous lesson that shapefile attributes can include a _class_, a _features_ count, an _extent_, a _coordinate reference system_ (crs), and additional _attributes_.
 
-<h3>Things You'll Need To Complete This Lesson</h3>
+These attributes can be extracted individually using the `class()`, `length()`, `extent()`, `crs()`, and `slot()` `R` commands. 
 
-<h3>R Libraries to Install:</h3>
-<ul>
-<li><strong>raster:</strong> <code> install.packages("raster")</code></li>
-<li><strong>rgdal:</strong> <code> install.packages("rgdal")</code></li>
+```{r Extract Individual Attributes}
+#view class
+class(squarePlot)
+class(lines)
+class(point)
 
-</ul>
-<h4>Tools To Install</h4>
+#view features count
+length(squarePlot)
+length(lines)
+length(point)
 
-Please be sure you have the most current version of `R` and preferably
-R studio to write your code.
+#view crs
+crs(squarePlot)
+crs(lines)
+crs(point)
+
+#view extent
+extent(squarePlot)
+extent(lines)
+extent(point)
+
+#view attributes
+slot(squarePlot, "data")
+slot(lines, "data")
+slot(point, "data")
+```
 
 
-<h4>Data to Download</h4>
+##Subsetting shapefiles
 
-Download the raster and *in situ* collected vegetation structure data:
-<ul>
-<li><a href="http://neonhighered.org/Data/LidarActivity/CHM_InSitu_Data.zip" class="btn btn-success"> DOWNLOAD Sample NEON LiDAR data in Raster Format & Vegetation Sampling Data</a></li>
-<li><a href="{{ site.baseurl }}/data/rasterLayers_tif.zip" class="btn btn-success"> DOWNLOAD NEON imagery data (tiff format) California Domain 17 (D17)</a></li>
-</ul>
+We already saw how to return all attributes of a spatial object using the `slot()` function. However, we can directly return individual attributes using the dollar sign notation. In the following code chunk we return a list of attribute names using the `slot()` and `names()` functions. Next, we query the _TYPE_ attribute individually. Finally, we subset the `lines` object using dollar sign notation. Note how our subsetting operation reduces the _features_ count from 13 to 2. 
 
-<p>The LiDAR and imagery data used to create the rasters in this dataset were 
-collected over the San Joaquin field site located in California (NEON Domain 17) 
-and processed at <a href="http://www.neoninc.org" target="_blank" >NEON </a> 
-headquarters. The entire dataset can be accessed by request from the NEON website.</p>  
+```{r }
+names(slot(lines, "data"))
 
-<h4>Recommended Pre-Lesson Reading</h4>
-<ul>
-<li>
-<a href="{{ site.baseurl }}/GIS-Spatial-Data/Working-With-Rasters/" target="_blank">
-The Relationship Between Raster Resolution, Spatial extent & Number of Pixels - in R</a>
-</li>
-<li>
-<a href="http://cran.r-project.org/web/packages/raster/raster.pdf" target="_blank">
-Read more about the `raster` package in R.</a>
-</li>
-</ul>
-</div>
+lines$TYPE
 
-#About Raster Data
-Raster or "gridded" data are data that are saved in pixels. In the spatial world, 
-each pixel represents an area on the Earth's surface. For example in the raster 
-below, each pixel represents a particular land cover class that would be found in 
-that location in the real world. 
-<a href="{{ site.baseurl }}/GIS-Spatial-Data/Working-With-Rasters/"> More on 
-rasters here</a>. 
-
-```{r chunk-1}
-#code will go here! 
-
+lines[lines$TYPE == "footpath",]
 ```

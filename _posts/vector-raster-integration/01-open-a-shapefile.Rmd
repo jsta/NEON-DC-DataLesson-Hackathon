@@ -1,100 +1,82 @@
 ---
-layout: post
-title: "Lesson Title Goes here"
-date:   2015-1-26 20:49:52
-authors: "FirstName LastName, FirstName LastName"
-dateCreated:  2014-11-26 20:49:52
-lastModified: 2015-07-23 14:28:52
-category: time-series-workshop
-tags: [module-1]
-mainTag: GIS-Spatial-Data
-description: "This post explains the fundamental principles, functions and metadata that you need to work with raster data in R."
-code1: 
-image:
-  feature: lidar_GrandMesa.png
-  credit: LiDAR data collected over Grand Mesa, Colorado - National Ecological Observatory Network (NEON)
-  creditlink: http://www.neoninc.org
-permalink: /R/Raster-Data-In-R/
-code1: /R/2015-07-22-Introduction-to-Raster-Data-In-R.R
-comments: true
-
+title: "Open and plot shapefiles"
+author: "Joseph Stachelek"
+date: "October 22, 2015"
+output: html_document
 ---
 
-<section id="table-of-contents" class="toc">
-  <header>
-    <h3>Contents</h3>
-  </header>
-<div id="drawer" markdown="1">
-*  Auto generated table of contents
-{:toc}
-</div>
-</section><!-- /#table-of-contents -->
-
 ##About
-This activity will walk you through the fundamental principles of working 
-with raster data in R.
+This post explains the how to open and plot point, line, and polygon shapefiles in R.
 
-**R Skill Level:** Intermediate - you've got the basics of `R` down.
+###Goals / Objectives
+After completing this activity, you will:
 
-<div id="objectives">
+ * Understand the concept of point, line, and polygon shapefiles
+ * Know how to open shapefiles (vector data)
+ * Understand the components of a _spatial object_ (in R)
+ 
+###Tools To Install
 
-<h3>Goals / Objectives</h3>
-After completing this activity, you will know:
-<ol>
-<li>What a raster dataset is and its fundamental attributes.</li>
-<li>How to import rasters into `R` using the raster library.</li>
-<li>How to perform raster calculations in `R`.</li>
-</ol>
+```{r Load Libraries}
+library(rgdal, quietly = TRUE)
+library(raster)
+```
 
-<h3>Things You'll Need To Complete This Lesson</h3>
+###Recommended Pre-Lesson Reading
 
-<h3>R Libraries to Install:</h3>
-<ul>
-<li><strong>raster:</strong> <code> install.packages("raster")</code></li>
-<li><strong>rgdal:</strong> <code> install.packages("rgdal")</code></li>
+#About Vector Data
+##Shapefiles: Points, Lines, and Polygons
+Vector geospatial data can be expressed as collections of points, lines, and polygons. This data is most commonly held in _shapefiles_ which store information about the geometry of the geospatial data as well as _attributes_ that describe the data. More about shapefiles can found on [Wikipedia](https://en.wikipedia.org/wiki/Shapefile) (add link to Metadata lesson?).
 
-</ul>
-<h4>Tools To Install</h4>
+##Importing shapefiles
 
-Please be sure you have the most current version of `R` and preferably
-R studio to write your code.
+We are going to use the `R` function `readOGR()` to import shapefiles stored on disk. These shapefiles include a polygon shapefile representing the boundaries of our study area, a line shapefile representing roads and streams, and a point shapefile representing the location of a NEON measurement tower.
 
+```{r Import Shapefile}
+prepath <- "NEON-DC-DataLesson-Hackathon/_posts"
+#prepath <- ".."
 
-<h4>Data to Download</h4>
+#Import a polygon shapefile 
 
-Download the raster and *in situ* collected vegetation structure data:
-<ul>
-<li><a href="http://neonhighered.org/Data/LidarActivity/CHM_InSitu_Data.zip" class="btn btn-success"> DOWNLOAD Sample NEON LiDAR data in Raster Format & Vegetation Sampling Data</a></li>
-<li><a href="{{ site.baseurl }}/data/rasterLayers_tif.zip" class="btn btn-success"> DOWNLOAD NEON imagery data (tiff format) California Domain 17 (D17)</a></li>
-</ul>
+squarePlot <- readOGR(file.path(prepath, "/data/boundaryFiles/HARV/"),"HarClip_UTMZ18")
 
-<p>The LiDAR and imagery data used to create the rasters in this dataset were 
-collected over the San Joaquin field site located in California (NEON Domain 17) 
-and processed at <a href="http://www.neoninc.org" target="_blank" >NEON </a> 
-headquarters. The entire dataset can be accessed by request from the NEON website.</p>  
+#Import a line shapefile
 
-<h4>Recommended Pre-Lesson Reading</h4>
-<ul>
-<li>
-<a href="{{ site.baseurl }}/GIS-Spatial-Data/Working-With-Rasters/" target="_blank">
-The Relationship Between Raster Resolution, Spatial extent & Number of Pixels - in R</a>
-</li>
-<li>
-<a href="http://cran.r-project.org/web/packages/raster/raster.pdf" target="_blank">
-Read more about the `raster` package in R.</a>
-</li>
-</ul>
-</div>
+lines <- readOGR(file.path(prepath, "/data/boundaryFiles/HARV/"),"HARV_roadStream")
 
-#About Raster Data
-Raster or "gridded" data are data that are saved in pixels. In the spatial world, 
-each pixel represents an area on the Earth's surface. For example in the raster 
-below, each pixel represents a particular land cover class that would be found in 
-that location in the real world. 
-<a href="{{ site.baseurl }}/GIS-Spatial-Data/Working-With-Rasters/"> More on 
-rasters here</a>. 
+#Import a point shapefile 
 
-```{r chunk-1}
-#code will go here! 
+point <- readOGR(file.path(prepath, "/data/boundaryFiles/HARV/"),"HARVtower_UTM18N")
+  
+```
 
+We can view an attribute summary of each shapefile by simplying entering the name of the `R` object in the console. Note that the output includes the _class_, the number of _features_, the _extent_, the _coordinate reference system_ (crs), and the _attributes_ of the`R` object.  
+
+```{r View Attribute Summary}
+#view attributes
+squarePlot
+lines
+point
+```
+
+##Plotting shapefiles
+
+The `plot()` function can be used for basic plotting of these spatial objects. Note that we use the `add = TRUE` argument to _overplot_ the lines and point shapefile onto the polygon shapefile. 
+
+```{r Plotting}
+#look at the shapefiles
+plot(squarePlot, col = "purple")
+plot(lines, add = TRUE)
+plot(point, add  = TRUE, pch = 19, col = "red")
+```
+
+We can use the `col` argument to the `plot()` function to color our lines according to the _TYPE_ attribute. The following code chunk extracts a vector of this attribute, creates a character color vector of the same length, and changes the positions of this color vector that correspond to _footpath_.
+
+```{r }
+#color lines by TYPE attribute
+type <- slot(lines, "data")$TYPE
+col <- rep("black", length = length(type))
+col[type == "footpath"] <- "red"
+
+plot(lines, col = col, add = TRUE)
 ```
